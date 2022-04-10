@@ -23,8 +23,9 @@ class Parameters {
   }
 
   /// Adds [value] as a parameter associated with [key].
-  void operator []=(final String key, final dynamic value) =>
-      _objects.add(Parameter(key: key, value: value));
+  void operator []=(final String key, final dynamic value) => _objects
+    ..removeWhere((parameter) => parameter.key == key)
+    ..add(Parameter(key: key, value: value));
 
   /// Removes all parameters.
   void removeAll() => _objects.removeRange(0, _objects.length);
@@ -45,6 +46,9 @@ class Parameters {
 
   /// Returns true if this object has parameter, otherwise false.
   bool get isNotEmpty => _objects.isNotEmpty;
+
+  /// Returns the number of parameters.
+  int get length => _objects.length;
 
   @override
   String toString() => _objects.toString();

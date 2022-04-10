@@ -2,6 +2,9 @@
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided the conditions.
 
+// Dart imports:
+import 'dart:async';
+
 // Package imports:
 import 'package:args/args.dart';
 
@@ -67,8 +70,23 @@ import 'package:batch/src/runner.dart';
 /// ```
 abstract class BatchApplication implements Runner {
   /// Returns the new instance of [BatchApplication].
-  factory BatchApplication({ArgResults? args, LogConfiguration? logConfig}) =>
-      _BatchApplication(args: args, logConfig: logConfig);
+  factory BatchApplication({
+    ArgResults? args,
+    LogConfiguration? logConfig,
+    FutureOr<void> Function(
+            ArgResults? args,
+            void Function({
+      required String key,
+      required dynamic value,
+    })
+                addSharedParameter)?
+        onLoadArgs,
+  }) =>
+      _BatchApplication(
+        args: args,
+        logConfig: logConfig,
+        onLoadArgs: onLoadArgs,
+      );
 
   /// Adds [Job].
   void addJob(final Job job);
@@ -82,15 +100,35 @@ abstract class BatchApplication implements Runner {
 
 class _BatchApplication implements BatchApplication {
   /// Returns the new instance of [_BatchApplication].
-  _BatchApplication({ArgResults? args, LogConfiguration? logConfig})
-      : _args = args,
-        _logConfig = logConfig;
+  _BatchApplication({
+    ArgResults? args,
+    LogConfiguration? logConfig,
+    FutureOr<void> Function(
+            ArgResults? args,
+            Function({
+      required String key,
+      required dynamic value,
+    })
+                addSharedParameter)?
+        onLoadArgs,
+  })  : _args = args,
+        _logConfig = logConfig,
+        _onLoadArgs = onLoadArgs;
 
   /// The parsed args
   final ArgResults? _args;
 
   /// The configuration for logging
   final LogConfiguration? _logConfig;
+
+  /// The callback to be called when the commend line arguments are loaded.
+  final FutureOr<void> Function(
+      ArgResults? args,
+      void Function({
+    required String key,
+    required dynamic value,
+  })
+          addSharedParameter)? _onLoadArgs;
 
   /// The jobs
   final _jobs = <Job>[];
@@ -124,9 +162,16 @@ class _BatchApplication implements BatchApplication {
 
       await BootDiagnostics(jobs: _jobs).run();
 
-      if (_args != null) {
-        for (final option in _args!.options) {
-          addSharedParameter(key: option, value: _args![option]);
+      if (_onLoadArgs != null) {
+        await _onLoadArgs!.call(_args, addSharedParameter);
+      } else {
+        //! Add all arguments as SharedParameters if onLoad is not defined.
+        if (_args != null) {
+          log.info('Add all command line arguments as SharedParameters');
+
+          for (final option in _args!.options) {
+            addSharedParameter(key: option, value: _args![option]);
+          }
         }
       }
 

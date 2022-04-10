@@ -9,6 +9,14 @@ import 'package:batch/batch.dart';
 
 void main(List<String> args) => BatchApplication(
       args: _argParser.parse(args),
+      onLoadArgs: (args, addSharedParameters) {
+        //! This callback is useful when you want to create a singleton instance using command line arguments
+        //! and manage it as SharedParameters in batch application. If this callback is not defined,
+        //! all command line arguments are added as SharedParameters automatically.
+        if (args != null) {
+          addSharedParameters(key: 'userName', value: args['userName']);
+        }
+      },
       logConfig: LogConfiguration(
         level: LogLevel.trace,
         output: MultiLogOutput([
@@ -248,12 +256,12 @@ class TestParallelTask extends ParallelTask<TestParallelTask> {
       i++;
     }
 
-    // The logging functions provided by frameworks such as "log.info" and "info" cannot be
-    // used in parallel processing. Instead, use the "sendMessage" method corresponding
-    // to the log level as below.
-    //
-    // Messages sent by the following "sendMessage" method are logged out at once after
-    // parallel processing is completed.
+    //! The logging functions provided by frameworks such as "log.info" and "info" cannot be
+    //! used in parallel processing. Instead, use the "sendMessage" method corresponding
+    //! to the log level as below.
+    //!
+    //! Messages sent by the following "sendMessage" method are logged out at once after
+    //! parallel processing is completed.
     super.sendMessageAsTrace('Trace');
     super.sendMessageAsDebug('Debug');
     super.sendMessageAsInfo('Info');

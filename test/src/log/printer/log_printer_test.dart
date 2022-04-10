@@ -30,7 +30,7 @@ void main() {
   });
 }
 
-class _LogPrinter implements LogPrinter {
+class _LogPrinter extends LogPrinter {
   @override
   void init() {}
 

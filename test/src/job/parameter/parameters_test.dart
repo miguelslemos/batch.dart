@@ -38,4 +38,18 @@ void main() {
     expect(parameters.isNotEmpty, false);
     expect(parameters.contains('testKey'), false);
   });
+
+  test('Test duplicated keys', () {
+    final parameters = Parameters();
+    parameters['duplicatedKey'] = false;
+    parameters['duplicatedKey'] = true;
+
+    expect(parameters['duplicatedKey'], isTrue);
+    expect(parameters.length == 1, isTrue);
+
+    parameters['duplicatedKey'] = false;
+
+    expect(parameters['duplicatedKey'], isFalse);
+    expect(parameters.length == 1, isTrue);
+  });
 }

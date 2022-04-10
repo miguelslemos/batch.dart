@@ -1,10 +1,21 @@
 # Release Note
 
+## v0.9.0
+
+- Improved schedule checking process. ([#118](https://github.com/batch-dart/batch.dart/issues/118))
+- Fixed handling of duplicate keys in `Parameters`. ([#117](https://github.com/batch-dart/batch.dart/issues/117))
+
+## v0.8.1
+
+- Improved `README.md`.
+
 ## v0.8.0
 
 - Changed startup banner. ([#101](https://github.com/batch-dart/batch.dart/issues/101))
 - Add `onRecover` feature to `RetryConfiguration`. It's executed when all retry has failed. ([#100](https://github.com/batch-dart/batch.dart/issues/100))
 - Supported to output log errors during parallel processing. ([#99](https://github.com/batch-dart/batch.dart/issues/99))
+- Added `onLoadArgs` callback in the `BatchApplication`. ([#102](https://github.com/batch-dart/batch.dart/issues/102))
+- Enhanced customizability of `LogPrinter`. ([#107](https://github.com/batch-dart/batch.dart/issues/107))
 
 ## v0.7.1
 

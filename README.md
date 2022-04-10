@@ -52,7 +52,7 @@ A lightweight and powerful Job Scheduling Framework.
 
 # 1. About
 
-The `Batch.dart` specification is large and more detailed documentation can be found from [Official Documents](https://github.com/batch-dart/docs/blob/main/README.md).
+The `Batch.dart` specification is large and more detailed documentation can be found from [Official Documents](https://batch-dart.github.io/documents).
 Also you can find detail examples of implementation at [here](https://pub.dev/packages/batch/example).
 
 ## 1.1. Mission
@@ -64,12 +64,12 @@ And the development concept of this framework is "[DRY](https://en.wikipedia.org
 ## 1.2. Features
 
 - Easy and intuitive job scheduling.
-- Scheduling in Cron format provided as standard (Customizable).
-- Powerful logging feature provided as standard (Customizable).
-- Easily define parallel processes.
 - No complicated configuration files.
+- Supports scheduling in [Cron](https://en.wikipedia.org/wiki/Cron) format as standard and customizable.
+- Supports powerful logging feature as standard and customizable.
+- Supports easily define parallel processes.
 - Supports conditional branching of jobs.
-- Extensive callback functions are provided at each step.
+- Supports extensive callback functions at each event.
 - Supports skipping and retrying according to user defined conditions.
 
 ## 1.3. Basic Usage
@@ -101,7 +101,7 @@ And `Event` is composed of the following elements.
 3. **Task** - The smallest unit.
 4. **Parallel** - It's kind of Task but represents parallel processes.
 
-**_You can see more information about `Event` at [Official Documents](https://github.com/batch-dart/docs/blob/main/resources/01_fundamentals.md#11-event)._**
+**_You can see more information about `Event` at [here](https://github.com/batch-dart/documents/blob/main/resources/01_fundamentals.md#11-event)._**
 
 ### 1.3.4. Configure Job Schedules
 
@@ -114,7 +114,7 @@ When defining a simple sequential process, all that is required is to define a c
 ```dart
 import 'package:batch/batch.dart';
 
-void main() => BatchApplication(),
+void main() => BatchApplication()
       ..addJob(
         // Scheduled to start every minute in Cron format
         Job(name: 'Job', schedule: CronParser(value: '*/1 * * * *'))
@@ -130,15 +130,15 @@ void main() => BatchApplication(),
 
 class DoSomethingTask extends Task<DoSomethingTask> {
   @override
-  void execute(ExecutionContext) {
+  void execute(ExecutionContext context) {
     // Write your code here.
   }
 }
 ```
 
-The above example is a very simple, and so you should refer to another document for more detailed specifications and implementation instructions.
+The above example is a very simple, and so you should refer to other documents also for more detailed specifications and implementation instructions.
 
-**_You can see more details at [Official Documents](https://github.com/batch-dart/docs/blob/main/README.md) or [example](https://pub.dev/packages/batch/example)._**
+**_You can see more details at [Official Documents](https://batch-dart.github.io/documents) or [example](https://pub.dev/packages/batch/example)._**
 
 #### 1.3.4.2. Parallel Process
 
@@ -153,7 +153,7 @@ import 'dart:async';
 
 import 'package:batch/batch.dart';
 
-void main() => BatchApplication(),
+void main() => BatchApplication()
       ..addJob(
         // Scheduled to start every minute in Cron format
         Job(name: 'Job', schedule: CronParser(value: '*/1 * * * *'))
@@ -200,7 +200,7 @@ And the default log level is **trace**.
 - **error**
 - **fatal**
 
-The logging feature provided by `Batch.dart` has extensive customization options. For more information, you can refer to the [Official Documents](https://github.com/batch-dart/docs/blob/main/resources/02_logging.md) describing logging on `Batch.dart`.
+The logging feature provided by `Batch.dart` has extensive customization options. For more information, you can refer to the [Official Documents](https://github.com/batch-dart/documents/blob/main/resources/02_logging.md) describing logging on `Batch.dart`.
 
 #### 1.3.5.1. On Sequential Process
 
@@ -350,7 +350,17 @@ And I'm always looking for sponsors to support this project. I'm not asking for 
 
 Sponsors can be individuals or corporations, and the amount is optional.
 
-If you would like to sponsor me, please check my [sponsorship page](https://github.com/sponsors/myConsciousness) on GitHub or contact me at kato.shinya.dev@gmail.com.
+<div align="center">
+  <p>
+    <b>👇 Click on the button below to see more details! 👇</b>
+  </p>
+
+  <p>
+    <a href="https://github.com/sponsors/myconsciousness">
+      <img src="https://cdn.ko-fi.com/cdn/kofi3.png?v=3" height="50" width="210" alt="myconsciousness" />
+    </a>
+  </p>
+</div>
 
 ## 1.6. License
 
@@ -368,7 +378,8 @@ All resources of `Batch.dart` is provided under the `BSD-3` license.
 - [Creator Profile](https://github.com/myConsciousness)
 - [License](https://github.com/batch-dart/batch.dart/blob/main/LICENSE)
 - [API Document](https://pub.dev/documentation/batch/latest/batch/batch-library.html)
-- [Official Documents](https://github.com/batch-dart/docs/blob/main/README.md)
+- [Official Documents [Markdown]](https://github.com/batch-dart/documents/blob/main/README.md)
+- [Official Documents [Web]](https://batch-dart.github.io/documents)
 - [Wikipedia](https://ja.wikipedia.org/wiki/Batch.dart)
 - [Release Note](https://github.com/batch-dart/batch.dart/releases)
 - [Bug Report](https://github.com/batch-dart/batch.dart/issues)
