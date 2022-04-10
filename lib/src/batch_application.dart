@@ -6,8 +6,6 @@
 import 'package:args/args.dart';
 
 // Project imports:
-import 'package:batch/src/banner/banner_printer.dart';
-import 'package:batch/src/banner/default_banner.dart';
 import 'package:batch/src/batch_instance.dart';
 import 'package:batch/src/batch_status.dart';
 import 'package:batch/src/diagnostics/boot_diagnostics.dart';
@@ -18,8 +16,6 @@ import 'package:batch/src/log/log_configuration.dart';
 import 'package:batch/src/log/logger.dart';
 import 'package:batch/src/log/logger_provider.dart';
 import 'package:batch/src/runner.dart';
-import 'package:batch/src/version/update_notification.dart';
-import 'package:batch/src/version/version.dart';
 
 /// This is a batch application that manages the execution of arbitrarily defined jobs
 /// with own lifecycle.
@@ -110,7 +106,7 @@ class _BatchApplication implements BatchApplication {
       SharedParameters.instance[key] = value;
 
   @override
-  void run() async {
+  Future<void> run() async {
     if (!BatchInstance.isPending) {
       throw StateError(
           'This batch application has already been executed from the "run()" method. Multiple launches of batch applications are not allowed.');
@@ -123,13 +119,10 @@ class _BatchApplication implements BatchApplication {
       //! will be available when this loading process is complete.
       Logger.loadFrom(config: _logConfig ?? LogConfiguration());
 
-      await BannerPrinter(banner: DefaultBanner()).execute();
-      await UpdateNotification().printIfNecessary(await Version().status);
-
       info('🚀🚀🚀🚀🚀🚀🚀 The batch process has started! 🚀🚀🚀🚀🚀🚀🚀');
       info('Logger instance has completed loading');
 
-      BootDiagnostics(jobs: _jobs).run();
+      await BootDiagnostics(jobs: _jobs).run();
 
       if (_args != null) {
         for (final option in _args!.options) {
@@ -137,7 +130,7 @@ class _BatchApplication implements BatchApplication {
         }
       }
 
-      JobScheduler(jobs: _jobs).run();
+      await JobScheduler(jobs: _jobs).run();
     } catch (e) {
       Logger.instance.dispose();
       throw Exception(e);

@@ -3,5 +3,5 @@
 // modification, are permitted provided the conditions.
 
 abstract class Runner {
-  void run();
+  Future<void> run();
 }

@@ -28,7 +28,7 @@ class _BootDiagnostics implements BootDiagnostics {
   final _nameRelations = NameRelations();
 
   @override
-  void run() {
+  Future<void> run() async {
     info('Batch application diagnostics have been started');
 
     if (_jobs.isEmpty) {

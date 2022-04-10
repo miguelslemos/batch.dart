@@ -11,7 +11,7 @@ import 'package:batch/src/runner.dart';
 class TestRunner implements Runner {
   bool result = false;
   @override
-  void run() => result = true;
+  Future<void> run() async => result = true;
 }
 
 void main() {

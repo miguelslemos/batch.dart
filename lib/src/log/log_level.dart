@@ -2,6 +2,8 @@
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided the conditions.
 
+import 'package:batch/src/utils.dart';
+
 /// The enum class that represents log level.
 enum LogLevel {
   /// A log level describing events showing step by step execution of your code
@@ -28,4 +30,8 @@ enum LogLevel {
   /// One or more key business functionalities are not working
   /// and the whole system doesn’t fulfill the business functionalities.
   fatal,
+}
+
+extension LogLevelExtension on LogLevel {
+  String get name => getEnumName(this);
 }
