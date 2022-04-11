@@ -32,10 +32,10 @@ class JobScheduler implements Runner {
           'Batch application is now running',
         );
         await JobLauncher(job: job).run();
-      } catch (error, stackTrace) {
-        BatchInstance.updateStatus(BatchStatus.shuttingDown);
-        fatal('Shut down the application due to a fatal exception', error,
-            stackTrace);
+        warn('Preparing for shutdown the batch application safely');
+      } catch (_) {
+        fatal('Shut down the application due to a fatal exception');
+        rethrow;
       } finally {
         _dispose();
       }
@@ -44,7 +44,6 @@ class JobScheduler implements Runner {
 
   void _dispose() {
     BatchInstance.updateStatus(BatchStatus.shuttingDown);
-    warn('Preparing for shutdown the batch application safely');
     warn('Allocation memory is releasing');
     warn('Shutdown the batch application');
     Logger.instance.dispose();
