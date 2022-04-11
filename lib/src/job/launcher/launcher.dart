@@ -47,8 +47,6 @@ abstract class Launcher<T extends Event<T>> extends ContextSupport<T>
 
     try {
       await execute.call(event);
-      await event.onSucceeded?.call(context);
-
       if (BatchInstance.isRunning) {
         if (event.hasBranch) {
           for (final branch in event.branches) {
@@ -62,6 +60,7 @@ abstract class Launcher<T extends Event<T>> extends ContextSupport<T>
 
       _retryCount = 0;
       super.finishExecutionAsCompleted(retry: retry);
+      await event.onSucceeded?.call(context);
 
       return true;
     } catch (error, stackTrace) {
