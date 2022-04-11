@@ -119,7 +119,7 @@ The Cron format needs to consist of 5 fields at least.
           .expand((list) => list!)
           .toSet()
           .toList()
-        ..sort();
+            ..sort();
 
       return items;
     }

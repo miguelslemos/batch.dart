@@ -4,6 +4,7 @@
 
 // Project imports:
 import 'package:batch/src/log/input_log_event.dart';
+import 'package:batch/src/log/log_level.dart';
 import 'package:batch/src/log/printer/log_printer.dart';
 
 /// The default printer.

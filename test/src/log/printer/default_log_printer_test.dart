@@ -18,7 +18,7 @@ void main() {
 
     expect(() => printer.init(), returnsNormally);
     expect(message[0].substring(message[0].indexOf('[')),
-        '[debug] (test.<anonymous closure>:213:7) - test');
+        '[debug] (test.<anonymous closure>:197:7) - test');
     expect(() => printer.dispose(), returnsNormally);
   });
 }

@@ -2,11 +2,12 @@
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided the conditions.
 
-// Package imports:
-import 'package:intl/intl.dart';
-
 // Project imports:
 import 'package:batch/src/log/input_log_event.dart';
+import 'package:batch/src/log/log_level.dart';
+
+// Package imports:
+import 'package:intl/intl.dart';
 
 abstract class LogPrinter {
   /// Returns the new instance of [LogPrinter].
