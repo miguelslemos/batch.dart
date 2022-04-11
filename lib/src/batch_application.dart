@@ -178,7 +178,7 @@ class _BatchApplication implements BatchApplication {
       await JobScheduler(jobs: _jobs).run();
     } catch (e) {
       Logger.instance.dispose();
-      throw Exception(e);
+      rethrow;
     }
   }
 }
