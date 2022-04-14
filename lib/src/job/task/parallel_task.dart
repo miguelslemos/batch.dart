@@ -12,18 +12,14 @@ import 'package:batch/src/job/parallel/parallel_task_support.dart';
 
 abstract class ParallelTask<T extends Task<T>> extends Task<T>
     with ParallelTaskSupport {
-  @override
-  FutureOr<void> execute(ExecutionContext context) async {
+  Future<void> invoke(ExecutionContext context) async {
     try {
-      await invoke();
+      await execute(context);
     } catch (e) {
       rethrow;
     }
 
     // ignore: invalid_use_of_visible_for_overriding_member
-    context.stepParameters['isolatedLogMessages'] = isolatedMessages;
+    context.jobParameters['_internalIsolatedLogMessages'] = isolatedMessages;
   }
-
-  /// Invokes piece of parallel processing.
-  FutureOr<void> invoke();
 }

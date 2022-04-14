@@ -17,6 +17,7 @@ export 'package:batch/src/job/event/parallel.dart';
 export 'package:batch/src/job/task/parallel_task.dart';
 export 'package:batch/src/job/context/execution_context.dart';
 export 'package:batch/src/job/execution.dart';
+export 'package:batch/src/job/execution_type.dart';
 export 'package:batch/src/job/schedule/parser/cron_parser.dart';
 export 'package:batch/src/job/config/skip_configuration.dart';
 export 'package:batch/src/job/config/retry_configuration.dart';

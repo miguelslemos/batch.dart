@@ -4,38 +4,23 @@
 
 // Project imports:
 import 'package:batch/src/job/context/execution_context.dart';
-import 'package:batch/src/job/event/parallel.dart';
 import 'package:batch/src/job/event/task.dart';
 import 'package:batch/src/job/launcher/launcher.dart';
-import 'package:batch/src/job/launcher/parallel_launcher.dart';
 
 class TaskLauncher extends Launcher<Task> {
   /// Returns the new instance of [TaskLauncher].
   TaskLauncher({
     required ExecutionContext context,
-    required List<dynamic> tasks,
-  })  : _tasks = tasks,
+    required Task task,
+  })  : _task = task,
         super(context: context);
 
-  /// The tasks
-  final List<dynamic> _tasks;
+  /// The task
+  final Task _task;
 
   @override
-  Future<void> run() async {
-    for (final task in _tasks) {
-      assert(task is Task || task is Parallel);
-
-      if (task is Parallel) {
-        await ParallelLauncher(
-          context: context,
-          parallel: task,
-        ).run();
-      } else {
-        await super.executeRecursively(
-          event: task,
-          execute: (task) async => await task.execute(context),
-        );
-      }
-    }
-  }
+  Future<void> run() async => await super.executeRecursively(
+        event: _task,
+        execute: (task) async => await task.execute(context),
+      );
 }

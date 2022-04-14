@@ -9,6 +9,7 @@ import 'dart:async';
 import 'package:test/test.dart';
 
 // Project imports:
+import 'package:batch/src/job/context/execution_context.dart';
 import 'package:batch/src/job/event/parallel.dart';
 import 'package:batch/src/job/task/parallel_task.dart';
 
@@ -21,10 +22,10 @@ void main() {
     );
 
     expect(parallel.name, 'Test Parallel');
-    expect(parallel.executors.length, 4);
+    expect(parallel.tasks.length, 4);
 
-    for (final executor in parallel.executors) {
-      expect(executor.parallelTask, task);
+    for (final task in parallel.tasks) {
+      expect(task, task);
     }
   });
 
@@ -33,7 +34,7 @@ void main() {
 
     expect(
         // ignore: deprecated_member_use_from_same_package
-        () => parallel.branchOnSucceeded(
+        () => parallel.createBranchOnSucceeded(
             to: Parallel(name: 'deprecated test', tasks: [])),
         throwsA(allOf(
             isA<UnsupportedError>(),
@@ -43,7 +44,7 @@ void main() {
 
     expect(
         // ignore: deprecated_member_use_from_same_package
-        () => parallel.branchOnFailed(
+        () => parallel.createBranchOnFailed(
             to: Parallel(name: 'deprecated test', tasks: [])),
         throwsA(allOf(
             isA<UnsupportedError>(),
@@ -53,7 +54,7 @@ void main() {
 
     expect(
         // ignore: deprecated_member_use_from_same_package
-        () => parallel.branchOnCompleted(
+        () => parallel.createBranchOnCompleted(
             to: Parallel(name: 'deprecated test', tasks: [])),
         throwsA(allOf(
             isA<UnsupportedError>(),
@@ -65,5 +66,5 @@ void main() {
 
 class _ParallelTask extends ParallelTask<_ParallelTask> {
   @override
-  FutureOr<void> invoke() {}
+  FutureOr<void> execute(ExecutionContext context) {}
 }

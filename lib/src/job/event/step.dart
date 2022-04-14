@@ -19,7 +19,7 @@ class Step extends Event<Step> {
   /// Returns the new instance of [Step].
   Step({
     required String name,
-    FutureOr<bool> Function()? precondition,
+    FutureOr<bool> Function(ExecutionContext context)? precondition,
     Function(ExecutionContext context)? onStarted,
     Function(ExecutionContext context)? onSucceeded,
     Function(ExecutionContext context, dynamic error, StackTrace stackTrace)?
@@ -38,18 +38,21 @@ class Step extends Event<Step> {
           retryConfig: retryConfig,
         );
 
-  /// The tasks include parallels
-  final List<dynamic> _tasks = [];
+  /// The task include parallel
+  dynamic _task;
 
-  /// Returns the copied tasks.
-  List<dynamic> get tasks => List.from(_tasks);
+  /// Returns the copied task.
+  dynamic get task => _task;
 
-  /// Adds next [Task].
-  void nextTask(final Task task) => _tasks.add(task);
+  /// Registers [Task].
+  void registerTask(final Task task) => _task = task;
 
-  /// Stores next [Parallel].
-  void nextParallel(final Parallel parallel) => _tasks.add(parallel);
+  /// Registers [Parallel].
+  void registerParallel(final Parallel parallel) => _task = parallel;
 
-  /// Add a task to shutdown this application.
-  void shutdown() => _tasks.add(ShutdownTask());
+  /// Registers a task to shutdown this application.
+  void shutdown() => _task = ShutdownTask();
+
+  /// Returns true if this step has a task, otherwise false.
+  bool get hasTask => _task != null;
 }

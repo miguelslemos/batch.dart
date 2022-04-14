@@ -8,6 +8,7 @@ import 'package:test/test.dart';
 // Project imports:
 import 'package:batch/src/job/context/execution_stack.dart';
 import 'package:batch/src/job/execution.dart';
+import 'package:batch/src/job/execution_type.dart';
 
 void main() {
   test('Test ExecutionStack', () {
@@ -16,10 +17,14 @@ void main() {
     expect(stack.isNotEmpty, false);
 
     final executions = [
-      Execution(name: 'Test1', startedAt: DateTime.now()),
-      Execution(name: 'Test2', startedAt: DateTime.now()),
-      Execution(name: 'Test3', startedAt: DateTime.now()),
-      Execution(name: 'Test4', startedAt: DateTime.now())
+      Execution(
+          type: ExecutionType.job, name: 'Test1', startedAt: DateTime.now()),
+      Execution(
+          type: ExecutionType.job, name: 'Test2', startedAt: DateTime.now()),
+      Execution(
+          type: ExecutionType.job, name: 'Test3', startedAt: DateTime.now()),
+      Execution(
+          type: ExecutionType.job, name: 'Test4', startedAt: DateTime.now())
     ];
 
     for (final execution in executions) {

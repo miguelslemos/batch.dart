@@ -15,10 +15,16 @@ import 'package:batch/src/job/task/parallel_task.dart';
 
 class ParallelExecutor extends AsyncTask<String, List<IsolatedLogMessage>> {
   /// Returns the new instance of [ParallelExecutor].
-  ParallelExecutor({required this.parallelTask});
+  ParallelExecutor({
+    required this.parallelTask,
+    required this.context,
+  });
 
   /// The parallel task
   final ParallelTask parallelTask;
+
+  /// The context from main thread.
+  final ExecutionContext context;
 
   @override
   AsyncTask<String, List<IsolatedLogMessage>> instantiate(String parameters,
@@ -33,14 +39,12 @@ class ParallelExecutor extends AsyncTask<String, List<IsolatedLogMessage>> {
 
   @override
   FutureOr<List<IsolatedLogMessage>> run() async {
-    final context = ExecutionContext();
-
     try {
-      await parallelTask.execute(context);
+      await parallelTask.invoke(context);
     } catch (e) {
       rethrow;
     }
 
-    return context.stepParameters['isolatedLogMessages'];
+    return context.jobParameters['_internalIsolatedLogMessages'];
   }
 }

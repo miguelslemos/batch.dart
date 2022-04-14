@@ -29,7 +29,7 @@ class _BootDiagnostics implements BootDiagnostics {
 
   @override
   Future<void> run() async {
-    info('Batch application diagnostics have been started');
+    log.info('Batch application diagnostics have been started');
 
     if (_jobs.isEmpty) {
       throw ArgumentError('The job to be launched is required.');
@@ -43,8 +43,8 @@ class _BootDiagnostics implements BootDiagnostics {
       _checkJobRecursively(job: job);
     }
 
-    info('Batch application diagnostics have been completed');
-    info('Batch applications can be started securely');
+    log.info('Batch application diagnostics have been completed');
+    log.info('Batch applications can be started securely');
   }
 
   void _checkJobRecursively({required Job job}) {
@@ -64,7 +64,7 @@ class _BootDiagnostics implements BootDiagnostics {
   }
 
   void _checkStepRecursively({required Job job, required Step step}) {
-    if (step.tasks.isEmpty) {
+    if (!step.hasTask) {
       throw ArgumentError(
         'The task or parallel to be launched is required.',
       );
@@ -75,19 +75,7 @@ class _BootDiagnostics implements BootDiagnostics {
           'You cannot set Skip and Retry at the same time in Step [name=${step.name}].');
     }
 
-    if (step.tasks.isNotEmpty) {
-      for (final task in step.tasks) {
-        if (task.hasSkipPolicy && task.hasRetryPolicy) {
-          throw ArgumentError(
-              'You cannot set Skip and Retry at the same time in Task [name=${task.name}].');
-        }
-      }
-    }
-
-    final relation = NameRelation(
-      job: job.name,
-      step: step.name,
-    );
+    final relation = NameRelation(job: job.name, step: step.name);
 
     if (_nameRelations.has(relation)) {
       throw UniqueConstraintError(

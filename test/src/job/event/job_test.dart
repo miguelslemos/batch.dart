@@ -6,6 +6,7 @@
 import 'package:test/test.dart';
 
 // Project imports:
+import 'package:batch/src/job/context/execution_context.dart';
 import 'package:batch/src/job/event/job.dart';
 import 'package:batch/src/job/event/step.dart';
 import 'package:batch/src/job/schedule/parser/cron_parser.dart';
@@ -21,7 +22,7 @@ void main() {
     expect(job.onSucceeded, null);
     expect(job.onError, null);
     expect(job.onCompleted, null);
-    expect(await job.shouldLaunch(), true);
+    expect(await job.shouldLaunch(ExecutionContext()), true);
     expect(job.hasBranch, false);
   });
 
@@ -35,7 +36,7 @@ void main() {
     expect(job.onSucceeded, null);
     expect(job.onError, null);
     expect(job.onCompleted, null);
-    expect(await job.shouldLaunch(), true);
+    expect(await job.shouldLaunch(ExecutionContext()), true);
     expect(job.hasBranch, false);
   });
 
