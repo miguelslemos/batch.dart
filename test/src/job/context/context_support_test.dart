@@ -38,9 +38,9 @@ void main() {
       expect(contextSupport.branchStatus, BranchStatus.completed);
 
       // Try to change branch status.
-      contextSupport.context.jobExecution!.branchToSucceeded();
+      contextSupport.context.jobExecution!.switchBranchToSucceeded();
       expect(contextSupport.branchStatus, BranchStatus.succeeded);
-      contextSupport.context.jobExecution!.branchToFailed();
+      contextSupport.context.jobExecution!.switchBranchToFailed();
       expect(contextSupport.branchStatus, BranchStatus.failed);
 
       contextSupport.finishExecutionAsCompleted(retry: false);
@@ -72,10 +72,10 @@ void main() {
       expect(contextSupport.branchStatus, BranchStatus.completed);
 
       // Try to change branch status.
-      contextSupport.context.jobExecution!.branchToSucceeded();
+      contextSupport.context.jobExecution!.switchBranchToSucceeded();
       expect(contextSupport.branchStatus, BranchStatus.succeeded);
       expect(contextSupport.context.jobExecution!.updatedAt != null, true);
-      contextSupport.context.jobExecution!.branchToFailed();
+      contextSupport.context.jobExecution!.switchBranchToFailed();
       expect(contextSupport.branchStatus, BranchStatus.failed);
       expect(contextSupport.context.jobExecution!.updatedAt != null, true);
 
@@ -124,9 +124,9 @@ void main() {
       expect(contextSupport.branchStatus, BranchStatus.completed);
 
       // Try to change branch status.
-      contextSupport.context.stepExecution!.branchToSucceeded();
+      contextSupport.context.stepExecution!.switchBranchToSucceeded();
       expect(contextSupport.branchStatus, BranchStatus.succeeded);
-      contextSupport.context.stepExecution!.branchToFailed();
+      contextSupport.context.stepExecution!.switchBranchToFailed();
       expect(contextSupport.branchStatus, BranchStatus.failed);
 
       contextSupport.finishExecutionAsCompleted(retry: false);
@@ -158,10 +158,10 @@ void main() {
       expect(contextSupport.branchStatus, BranchStatus.completed);
 
       // Try to change branch status.
-      contextSupport.context.stepExecution!.branchToSucceeded();
+      contextSupport.context.stepExecution!.switchBranchToSucceeded();
       expect(contextSupport.branchStatus, BranchStatus.succeeded);
       expect(contextSupport.context.stepExecution!.updatedAt != null, true);
-      contextSupport.context.stepExecution!.branchToFailed();
+      contextSupport.context.stepExecution!.switchBranchToFailed();
       expect(contextSupport.branchStatus, BranchStatus.failed);
       expect(contextSupport.context.stepExecution!.updatedAt != null, true);
 
@@ -208,22 +208,6 @@ void main() {
       expect(contextSupport.context.jobExecution, null);
       expect(contextSupport.context.stepExecution, null);
       expect(contextSupport.branchStatus, BranchStatus.completed);
-
-      // Try to change branch status.
-      contextSupport.context.taskExecution!.branchToSucceeded();
-      expect(contextSupport.branchStatus, BranchStatus.succeeded);
-      contextSupport.context.taskExecution!.branchToFailed();
-      expect(contextSupport.branchStatus, BranchStatus.failed);
-
-      contextSupport.finishExecutionAsCompleted(retry: false);
-      expect(contextSupport.context.taskExecution!.name, 'Task');
-      expect(contextSupport.context.taskExecution!.isRunning, false);
-      expect(contextSupport.context.taskExecution!.isCompleted, true);
-      expect(contextSupport.context.taskExecution!.isSkipped, false);
-      expect(contextSupport.context.taskExecution!.updatedAt != null, true);
-      expect(contextSupport.context.taskExecution!.finishedAt != null, true);
-      expect(contextSupport.context.jobExecution, null);
-      expect(contextSupport.context.stepExecution, null);
     });
 
     test('Test when a retry and skip', () {
@@ -242,38 +226,6 @@ void main() {
       expect(contextSupport.context.jobExecution, null);
       expect(contextSupport.context.stepExecution, null);
       expect(contextSupport.branchStatus, BranchStatus.completed);
-
-      // Try to change branch status.
-      contextSupport.context.taskExecution!.branchToSucceeded();
-      expect(contextSupport.branchStatus, BranchStatus.succeeded);
-      expect(contextSupport.context.taskExecution!.updatedAt != null, true);
-      contextSupport.context.taskExecution!.branchToFailed();
-      expect(contextSupport.branchStatus, BranchStatus.failed);
-      expect(contextSupport.context.taskExecution!.updatedAt != null, true);
-
-      // Should skip create new and finish execution on retry
-      contextSupport.startNewExecution(name: 'Task2', retry: true);
-      expect(contextSupport.context.taskExecution!.name, 'Task');
-      expect(contextSupport.context.taskExecution!.isRunning, true);
-      expect(contextSupport.context.taskExecution!.isCompleted, false);
-      expect(contextSupport.context.taskExecution!.isSkipped, false);
-      expect(contextSupport.context.taskExecution!.updatedAt != null, true);
-      expect(contextSupport.context.taskExecution!.finishedAt, null);
-      expect(contextSupport.context.jobExecution, null);
-      expect(contextSupport.context.stepExecution, null);
-      expect(contextSupport.branchStatus, BranchStatus.failed);
-      contextSupport.finishExecutionAsCompleted(retry: true);
-      expect(contextSupport.context.taskExecution!.name, 'Task');
-
-      contextSupport.finishExecutionAsSkipped(retry: false);
-      expect(contextSupport.context.taskExecution!.name, 'Task');
-      expect(contextSupport.context.taskExecution!.isRunning, false);
-      expect(contextSupport.context.taskExecution!.isCompleted, false);
-      expect(contextSupport.context.taskExecution!.isSkipped, true);
-      expect(contextSupport.context.taskExecution!.updatedAt != null, true);
-      expect(contextSupport.context.taskExecution!.finishedAt != null, true);
-      expect(contextSupport.context.jobExecution, null);
-      expect(contextSupport.context.stepExecution, null);
     });
   });
 

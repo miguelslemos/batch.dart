@@ -32,7 +32,7 @@ abstract class Launcher<T extends Event<T>> extends ContextSupport<T>
 
     super.startNewExecution(name: event.name, retry: retry);
 
-    if (!await event.shouldLaunch()) {
+    if (!await event.shouldLaunch(context)) {
       log.info('Skipped ${event.name} because the precondition is not met.');
       super.finishExecutionAsSkipped(retry: retry);
       return true;

@@ -36,7 +36,7 @@ abstract class Event<T extends Event<T>> {
   final String name;
 
   /// The precondition
-  final FutureOr<bool> Function()? precondition;
+  final FutureOr<bool> Function(ExecutionContext context)? precondition;
 
   /// The callback when this process is started
   final Function(ExecutionContext context)? onStarted;
@@ -64,19 +64,20 @@ abstract class Event<T extends Event<T>> {
   final List<Branch<T>> branches = [];
 
   /// Returns true if this event can launch, otherwise false.
-  Future<bool> shouldLaunch() async => await precondition?.call() ?? true;
+  Future<bool> shouldLaunch(ExecutionContext context) async =>
+      await precondition?.call(context) ?? true;
 
   /// Add a branch in case the parent process is succeeded.
-  void branchOnSucceeded({required T to}) =>
+  void createBranchOnSucceeded({required T to}) =>
       _addNewBranch(on: BranchStatus.succeeded, to: to);
 
   /// Adds a branch in case the parent process is failed.
-  void branchOnFailed({required T to}) =>
+  void createBranchOnFailed({required T to}) =>
       _addNewBranch(on: BranchStatus.failed, to: to);
 
   /// Adds a branch in case the parent process is completed regardless success
   /// and failure of the process.
-  void branchOnCompleted({required T to}) =>
+  void createBranchOnCompleted({required T to}) =>
       _addNewBranch(on: BranchStatus.completed, to: to);
 
   /// Returns true if this event has branch, otherwise false.

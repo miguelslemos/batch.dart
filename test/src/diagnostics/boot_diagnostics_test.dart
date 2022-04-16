@@ -29,10 +29,7 @@ void main() {
           name: 'Job',
           schedule: CronParser(value: '* * * * *'),
         )..nextStep(
-            Step(name: 'Step')
-              ..nextTask(
-                TestTask(),
-              ),
+            Step(name: 'Step')..registerTask(TestTask()),
           ),
       ]);
 
@@ -47,23 +44,15 @@ void main() {
         )
           ..nextStep(
             Step(name: 'Step')
-              ..nextTask(
-                TestTask(),
-              )
-              ..branchOnCompleted(
-                to: Step(name: 'Step2')
-                  ..nextTask(
-                    TestTask(),
-                  ),
+              ..registerTask(TestTask())
+              ..createBranchOnCompleted(
+                to: Step(name: 'Step2')..registerTask(TestTask()),
               ),
           )
-          ..branchOnCompleted(
+          ..createBranchOnCompleted(
             to: Job(name: 'Job2')
               ..nextStep(
-                Step(name: 'Step')
-                  ..nextTask(
-                    TestTask(),
-                  ),
+                Step(name: 'Step')..registerTask(TestTask()),
               ),
           ),
       ]);
@@ -82,9 +71,7 @@ void main() {
               skipConfig: SkipConfiguration(
                 skippableExceptions: [],
               ),
-            )..nextTask(
-                TestTask(),
-              ),
+            )..registerTask(TestTask()),
           ),
       ]);
 
@@ -102,9 +89,7 @@ void main() {
               retryConfig: RetryConfiguration(
                 retryableExceptions: [],
               ),
-            )..nextTask(
-                TestTask(),
-              ),
+            )..registerTask(TestTask()),
           ),
       ]);
 
@@ -186,7 +171,7 @@ void main() {
                 name: 'Step',
                 skipConfig: SkipConfiguration(skippableExceptions: []),
                 retryConfig: RetryConfiguration(retryableExceptions: []),
-              )..nextTask(TestTask()),
+              )..registerTask(TestTask()),
             )
         ]).run(),
         throwsA(allOf(
@@ -200,37 +185,12 @@ void main() {
       );
     });
 
-    test('Test when Task has Skip and Retry configs', () {
-      expect(
-        () => BootDiagnostics(jobs: [
-          Job(name: 'Job', schedule: CronParser(value: '* * * * *'))
-            ..nextStep(
-              Step(name: 'Step')
-                ..nextTask(
-                  TestTask(
-                    skipConfig: SkipConfiguration(skippableExceptions: []),
-                    retryConfig: RetryConfiguration(retryableExceptions: []),
-                  ),
-                ),
-            )
-        ]).run(),
-        throwsA(allOf(
-          isArgumentError,
-          predicate(
-            (dynamic e) =>
-                e.message ==
-                'You cannot set Skip and Retry at the same time in Task [name=TestTask].',
-          ),
-        )),
-      );
-    });
-
     test('Test when there is duplicated Step name', () {
       expect(
         () => BootDiagnostics(jobs: [
           Job(name: 'Job', schedule: CronParser(value: '* * * * *'))
-            ..nextStep(Step(name: 'Step')..nextTask(TestTask()))
-            ..nextStep(Step(name: 'Step')..nextTask(TestTask()))
+            ..nextStep(Step(name: 'Step')..registerTask(TestTask()))
+            ..nextStep(Step(name: 'Step')..registerTask(TestTask()))
         ]).run(),
         throwsA(allOf(
           isA<UniqueConstraintError>(),
@@ -248,9 +208,9 @@ void main() {
         () => BootDiagnostics(jobs: [
           Job(name: 'Job', schedule: CronParser(value: '* * * * *'))
             ..nextStep(Step(name: 'Step')
-              ..nextTask(TestTask())
-              ..branchOnCompleted(
-                to: (Step(name: 'Step')..nextTask(TestTask())),
+              ..registerTask(TestTask())
+              ..createBranchOnCompleted(
+                to: (Step(name: 'Step')..registerTask(TestTask())),
               ))
         ]).run(),
         throwsA(allOf(

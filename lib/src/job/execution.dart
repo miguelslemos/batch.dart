@@ -4,11 +4,13 @@
 
 // Project imports:
 import 'package:batch/src/job/branch/branch_status.dart';
+import 'package:batch/src/job/execution_type.dart';
 import 'package:batch/src/job/process_status.dart';
 
 class Execution {
   /// Returns the new instance of [Execution].
   Execution({
+    required this.type,
     required this.name,
     ProcessStatus status = ProcessStatus.running,
     required this.startedAt,
@@ -17,6 +19,9 @@ class Execution {
   })  : assert(name.isNotEmpty),
         _status = status,
         _updatedAt = updatedAt;
+
+  /// The execution type
+  final ExecutionType type;
 
   /// The name
   final String name;
@@ -43,13 +48,13 @@ class Execution {
   DateTime? get updatedAt => _updatedAt;
 
   /// Updates branch status to succeeded.
-  void branchToSucceeded() => _updateBranchStatus(BranchStatus.succeeded);
+  void switchBranchToSucceeded() => _updateBranchStatus(BranchStatus.succeeded);
 
   /// Updates branch status to failed.
-  void branchToFailed() => _updateBranchStatus(BranchStatus.failed);
+  void switchBranchToFailed() => _updateBranchStatus(BranchStatus.failed);
 
   /// Updates branch status to completed.
-  void branchToCompleted() => _updateBranchStatus(BranchStatus.completed);
+  void switchBranchToCompleted() => _updateBranchStatus(BranchStatus.completed);
 
   /// Returns true if this execution is running, otherwise false.
   bool get isRunning => _status == ProcessStatus.running;
@@ -61,6 +66,10 @@ class Execution {
   bool get isCompleted => _status == ProcessStatus.completed;
 
   void _updateBranchStatus(final BranchStatus status) {
+    if (type == ExecutionType.task) {
+      throw UnsupportedError('Branches in Task execution are not supported.');
+    }
+
     _branchStatus = status;
     _updatedAt = DateTime.now();
   }

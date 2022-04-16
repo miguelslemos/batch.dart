@@ -20,18 +20,7 @@ void main() {
     expect(parameters.contains('testKey'), true);
     expect(parameters.contains('test'), false);
     expect(parameters['testKey'], 0);
-    expect(
-      () => parameters['test'],
-      throwsA(
-        allOf(
-          isA<ArgumentError>(),
-          predicate((dynamic e) =>
-              e.message == 'There is no parameter associated with [key=test].'),
-        ),
-      ),
-    );
-
-    expect(parameters.toString(), '[testKey=0]');
+    expect(parameters.toString(), '{testKey: 0}');
 
     parameters.removeAll();
     expect(parameters.isEmpty, true);

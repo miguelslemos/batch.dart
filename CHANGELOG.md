@@ -1,5 +1,24 @@
 # Release Note
 
+## v0.12.1
+
+- Enhanced `README.md` and added examples.
+
+## v0.12.0
+
+- The `args` argument of the `onLoadArgs` callback is now non-nullable. The null check is no longer necessary. ([#135](https://github.com/batch-dart/batch.dart/issues/135))
+
+## v0.11.0
+
+- Improved names of branch features. Now you can create branches with `createBranchOnXXXXX` and switch branches with `switchBranchToXXXXX`. ([#128](https://github.com/batch-dart/batch.dart/issues/128))
+- Fixed to be able to refer to ExecutionContext in processing Precondition. ([#132](https://github.com/batch-dart/batch.dart/issues/132))
+
+## v0.10.0
+
+- Allows parallel processing to use the main thread `ExecutionContext`. ([#121](https://github.com/batch-dart/batch.dart/issues/121))
+- Removed `trace`, `debug`, `info`, `warn`, `error`, and `fatal` from convenient methods of logging feature. Make sure to access the logger from `log`. ([#125](https://github.com/batch-dart/batch.dart/issues/125)
+- Changed specification regarding tasks to be set in `Step`. Under the new specification, there will always be only one task that can be set in a single step. ([#123](https://github.com/batch-dart/batch.dart/issues/123))
+
 ## v0.9.0
 
 - Improved schedule checking process. ([#118](https://github.com/batch-dart/batch.dart/issues/118))
