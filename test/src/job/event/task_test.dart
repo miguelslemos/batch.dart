@@ -14,6 +14,7 @@ import 'package:batch/src/job/config/skip_configuration.dart';
 import 'package:batch/src/job/context/execution_context.dart';
 import 'package:batch/src/job/event/task.dart';
 import 'package:batch/src/job/execution.dart';
+import 'package:batch/src/job/execution_type.dart';
 import 'package:batch/src/log/log_configuration.dart';
 import 'package:batch/src/log/logger.dart';
 
@@ -23,7 +24,8 @@ void main() {
     expect(task.name, '_Task');
 
     final context = ExecutionContext();
-    context.jobExecution = Execution(name: 'test', startedAt: DateTime.now());
+    context.jobExecution = Execution(
+        type: ExecutionType.job, name: 'test', startedAt: DateTime.now());
     expect(() => task.execute(context), returnsNormally);
 
     expect(task.precondition, null);
@@ -35,7 +37,7 @@ void main() {
     expect(task.retryPolicy, null);
     expect(task.hasSkipPolicy, false);
     expect(task.hasRetryPolicy, false);
-    expect(await task.shouldLaunch(), true);
+    expect(await task.shouldLaunch(ExecutionContext()), true);
     expect(task.hasBranch, false);
   });
 }

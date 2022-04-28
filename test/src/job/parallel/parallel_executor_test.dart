@@ -9,13 +9,15 @@ import 'dart:async';
 import 'package:test/test.dart';
 
 // Project imports:
+import 'package:batch/src/job/context/execution_context.dart';
 import 'package:batch/src/job/parallel/parallel_executor.dart';
 import 'package:batch/src/job/task/parallel_task.dart';
 
 void main() {
   test('Test ParallelExecutor', () {
     final task = _ParallelTask();
-    final executor = ParallelExecutor(parallelTask: task);
+    final executor =
+        ParallelExecutor(parallelTask: task, context: ExecutionContext());
 
     expect(executor.parallelTask, task);
     expect(executor.instantiate(''), executor);
@@ -25,7 +27,8 @@ void main() {
 
   test('Test ParallelExecutor with error', () {
     final task = _ParallelTaskWithError();
-    final executor = ParallelExecutor(parallelTask: task);
+    final executor =
+        ParallelExecutor(parallelTask: task, context: ExecutionContext());
 
     expect(executor.parallelTask, task);
     expect(executor.instantiate(''), executor);
@@ -39,12 +42,12 @@ void main() {
 
 class _ParallelTask extends ParallelTask<_ParallelTask> {
   @override
-  FutureOr<void> invoke() {}
+  FutureOr<void> execute(ExecutionContext context) {}
 }
 
 class _ParallelTaskWithError extends ParallelTask<_ParallelTaskWithError> {
   @override
-  FutureOr<void> invoke() {
+  FutureOr<void> execute(ExecutionContext context) {
     throw UnimplementedError('success');
   }
 }

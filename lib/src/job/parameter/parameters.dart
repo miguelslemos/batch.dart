@@ -2,44 +2,27 @@
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided the conditions.
 
-// Project imports:
-import 'package:batch/src/job/parameter/parameter.dart';
-
 class Parameters {
   /// The objects
-  final _objects = <Parameter>[];
+  final _objects = <String, dynamic>{};
 
   /// Returns the parameter value associated with [key].
-  dynamic operator [](final String key) {
-    if (!contains(key)) {
-      throw ArgumentError('There is no parameter associated with [key=$key].');
-    }
-
-    for (final parameter in _objects) {
-      if (parameter.key == key) {
-        return parameter.value;
-      }
-    }
-  }
+  dynamic operator [](final String key) => _objects[key];
 
   /// Adds [value] as a parameter associated with [key].
-  void operator []=(final String key, final dynamic value) => _objects
-    ..removeWhere((parameter) => parameter.key == key)
-    ..add(Parameter(key: key, value: value));
+  void operator []=(final String key, final dynamic value) =>
+      _objects[key] = value;
 
   /// Removes all parameters.
-  void removeAll() => _objects.removeRange(0, _objects.length);
+  void removeAll() => _objects.clear();
 
   /// Returns true if this object has [key] passed as an argument, otherwise false.
-  bool contains(final String key) {
-    for (final parameter in _objects) {
-      if (parameter.key == key) {
-        return true;
-      }
-    }
+  bool contains(final String key) => _objects.containsKey(key);
 
-    return false;
-  }
+  /// Applies [action] to each key/value pair of the map.
+  /// Calling action must not add or remove keys from the map.
+  void forEach(void Function(String key, dynamic value) action) =>
+      _objects.forEach((key, value) => action(key, value));
 
   // Returns true if this object has no parameter, otherwise false.
   bool get isEmpty => _objects.isEmpty;

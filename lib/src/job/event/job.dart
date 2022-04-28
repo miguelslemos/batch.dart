@@ -21,7 +21,7 @@ class Job extends Event<Job> {
   Job({
     required String name,
     this.schedule,
-    FutureOr<bool> Function()? precondition,
+    FutureOr<bool> Function(ExecutionContext context)? precondition,
     Function(ExecutionContext context)? onStarted,
     Function(ExecutionContext context)? onSucceeded,
     Function(ExecutionContext context, dynamic error, StackTrace stackTrace)?

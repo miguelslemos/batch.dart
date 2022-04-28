@@ -28,14 +28,14 @@ void main() {
     expect(event.retryPolicy, null);
     expect(event.hasSkipPolicy, false);
     expect(event.hasRetryPolicy, false);
-    expect(await event.shouldLaunch(), true);
+    expect(await event.shouldLaunch(ExecutionContext()), true);
     expect(event.hasBranch, false);
   });
 
   test('Test Event with precondition', () async {
-    final event = _Event(name: 'name', precondition: () => false);
+    final event = _Event(name: 'name', precondition: (context) => false);
     expect(event.name, 'name');
-    expect(await event.shouldLaunch(), false);
+    expect(await event.shouldLaunch(ExecutionContext()), false);
   });
 
   test('Test Event with callbacks', () {
@@ -71,9 +71,9 @@ void main() {
     expect(event.name, 'name');
     expect(event.hasBranch, false);
 
-    event.branchOnSucceeded(to: _Event(name: 'succeeded'));
-    event.branchOnCompleted(to: _Event(name: 'completed'));
-    event.branchOnFailed(to: _Event(name: 'failed'));
+    event.createBranchOnSucceeded(to: _Event(name: 'succeeded'));
+    event.createBranchOnCompleted(to: _Event(name: 'completed'));
+    event.createBranchOnFailed(to: _Event(name: 'failed'));
 
     expect(event.hasBranch, true);
     expect(event.branches.length, 3);
@@ -89,7 +89,7 @@ void main() {
 class _Event extends Event<_Event> {
   _Event({
     required String name,
-    FutureOr<bool> Function()? precondition,
+    FutureOr<bool> Function(ExecutionContext context)? precondition,
     Function(ExecutionContext context)? onStarted,
     Function(ExecutionContext context)? onSucceeded,
     Function(ExecutionContext context, dynamic error, StackTrace stackTrace)?

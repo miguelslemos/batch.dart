@@ -2,13 +2,11 @@
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided the conditions.
 
-// Dart imports:
-import 'dart:async';
-
 // Project imports:
+import 'package:batch/src/job/config/retry_configuration.dart';
+import 'package:batch/src/job/config/skip_configuration.dart';
 import 'package:batch/src/job/context/execution_context.dart';
 import 'package:batch/src/job/event/event.dart';
-import 'package:batch/src/job/parallel/parallel_executor.dart';
 import 'package:batch/src/job/task/parallel_task.dart';
 
 class Parallel extends Event<Parallel> {
@@ -16,43 +14,40 @@ class Parallel extends Event<Parallel> {
   Parallel({
     required String name,
     required List<ParallelTask> tasks,
-    FutureOr<bool> Function()? precondition,
     Function(ExecutionContext context)? onStarted,
     Function(ExecutionContext context)? onSucceeded,
     Function(ExecutionContext context, dynamic error, StackTrace stackTrace)?
         onError,
     Function(ExecutionContext context)? onCompleted,
-  }) : super(
+    SkipConfiguration? skipConfig,
+    RetryConfiguration? retryConfig,
+  })  : _tasks = tasks,
+        super(
           name: name,
-          precondition: precondition,
           onStarted: onStarted,
           onSucceeded: onSucceeded,
           onError: onError,
           onCompleted: onCompleted,
-        ) {
-    for (final task in tasks) {
-      _executors.add(ParallelExecutor(parallelTask: task));
-    }
-  }
+        );
 
-  /// The parallel executors
-  final List<ParallelExecutor> _executors = [];
+  /// The parallel tasks
+  final List<ParallelTask> _tasks;
 
-  /// Returns the copied executors.
-  List<ParallelExecutor> get executors => List.from(_executors);
+  /// Returns the copied tasks.
+  List<ParallelTask> get tasks => List.from(_tasks);
 
   @override
   @Deprecated('not supported operation and always UnsupportedError throws')
-  void branchOnSucceeded({required Parallel to}) =>
+  void createBranchOnSucceeded({required Parallel to}) =>
       throw UnsupportedError('Branch feature is not supported for parallel.');
 
   @override
   @Deprecated('not supported and always UnsupportedError throws')
-  void branchOnFailed({required Parallel to}) =>
+  void createBranchOnFailed({required Parallel to}) =>
       throw UnsupportedError('Branch feature is not supported for parallel.');
 
   @override
   @Deprecated('not supported and always UnsupportedError throws')
-  void branchOnCompleted({required Parallel to}) =>
+  void createBranchOnCompleted({required Parallel to}) =>
       throw UnsupportedError('Branch feature is not supported for parallel.');
 }

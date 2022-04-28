@@ -13,9 +13,7 @@ void main(List<String> args) => BatchApplication(
         //! This callback is useful when you want to create a singleton instance using command line arguments
         //! and manage it as SharedParameters in batch application. If this callback is not defined,
         //! all command line arguments are added as SharedParameters automatically.
-        if (args != null) {
-          addSharedParameters(key: 'userName', value: args['userName']);
-        }
+        addSharedParameters(key: 'userName', value: args['userName']);
       },
       logConfig: LogConfiguration(
         level: LogLevel.trace,
@@ -53,9 +51,9 @@ Job get _testJob1 => Job(
       schedule: CronParser(value: '*/1 * * * *'),
       // You can define callbacks for each processing phase.
       onStarted: (context) =>
-          info('\n--------------- Job1 has started! ---------------'),
+          log.info('\n--------------- Job1 has started! ---------------'),
       onCompleted: (context) =>
-          info('\n--------------- Job1 has completed! ---------------'),
+          log.info('\n--------------- Job1 has completed! ---------------'),
     )
       ..nextStep(
         Step(
@@ -63,20 +61,19 @@ Job get _testJob1 => Job(
           skipConfig: SkipConfiguration(
             skippableExceptions: [Exception()],
           ),
-        )
-          ..nextTask(
+        )..registerTask(
             RetryTask(
               // You can define callbacks for each processing phase.
-              onStarted: (context) => info(
+              onStarted: (context) => log.info(
                   '\n--------------- RetryTask has started! ---------------'),
-              onSucceeded: (context) => info(
+              onSucceeded: (context) => log.info(
                   '\n--------------- RetryTask has succeeded! ---------------'),
               onError: (context, error, stackTrace) => log.error(
                 '\n--------------- Error RetryTask ---------------',
                 error,
                 stackTrace,
               ),
-              onCompleted: (context) => info(
+              onCompleted: (context) => log.info(
                   '\n--------------- RetryTask has completed! ---------------'),
               retryConfig: RetryConfiguration(
                 maxAttempt: 3,
@@ -87,48 +84,34 @@ Job get _testJob1 => Job(
                 },
               ),
             ),
-          )
-          ..nextTask(SayHelloTask())
-          ..nextTask(SayWorldTask()),
+          ),
       )
       ..nextStep(
         Step(name: 'Step2')
-          ..nextTask(TestTask())
-          ..nextTask(SayHelloTask())
-          ..nextTask(SayWorldTask())
-          ..branchOnSucceeded(
-            to: Step(name: 'Step3')
-              ..nextTask(TestTask())
-              ..nextTask(SayHelloTask())
-              ..nextTask(SayWorldTask()),
+          ..registerTask(TestTask())
+          ..createBranchOnSucceeded(
+            to: Step(name: 'Step3')..registerTask(SayHelloTask()),
           )
-          ..branchOnFailed(
+          ..createBranchOnFailed(
             to: Step(name: 'Step4')
-              ..nextTask(TestTask())
-              ..nextTask(SayHelloTask())
-              ..branchOnCompleted(
+              ..registerTask(SayHelloTask())
+              ..createBranchOnCompleted(
                 to: Step(
                   name: 'Step6',
                   // You can set any preconditions to run Step.
-                  precondition: () => false,
-                )
-                  ..nextTask(TestTask())
-                  ..nextTask(SayHelloTask())
-                  ..nextTask(SayWorldTask()),
+                  precondition: (context) => false,
+                )..registerTask(SayWorldTask()),
               ),
           )
-          ..branchOnCompleted(
+          ..createBranchOnCompleted(
             to: Step(
               name: 'Step5',
               // You can define callbacks for each processing phase.
-              onStarted: (context) =>
-                  info('\n--------------- Step5 has started! ---------------'),
-              onCompleted: (context) => info(
+              onStarted: (context) => log
+                  .info('\n--------------- Step5 has started! ---------------'),
+              onCompleted: (context) => log.info(
                   '\n--------------- Step5 has completed! ---------------'),
-            )
-              ..nextTask(TestTask())
-              ..nextTask(SayHelloTask())
-              ..nextTask(SayWorldTask()),
+            )..registerTask(SayHelloTask()),
           ),
       );
 
@@ -136,37 +119,28 @@ Job get _testJob2 => Job(
       name: 'Job2',
       schedule: CronParser(value: '*/5 * * * *'),
       // You can set any preconditions to run Job.
-      precondition: () async => true,
+      precondition: (context) async => true,
     )
       ..nextStep(
         Step(
           name: 'Step1',
-          precondition: () => true,
-        )
-          ..nextTask(SayHelloTask())
-          ..nextTask(SayWorldTask()),
+          precondition: (context) => true,
+        )..registerTask(SayWorldTask()),
       )
-      ..branchOnSucceeded(
-        to: Job(name: 'Job3')
-          ..nextStep(
-            Step(name: 'Step1')
-              ..nextTask(SayHelloTask())
-              ..nextTask(SayWorldTask())
-              ..shutdown(),
-          ),
+      ..createBranchOnSucceeded(
+        to: Job(name: 'Job3')..nextStep(Step(name: 'Step1')..shutdown()),
       );
 
 Job get _testJob4 => Job(
       name: 'Job4',
       schedule: CronParser(value: '*/1 * * * *'),
       // You can set any preconditions to run Job.
-      precondition: () async => true,
+      precondition: (context) async => true,
     )..nextStep(
         Step(
           name: 'Parallel Step',
-          precondition: () => true,
-        )
-          ..nextParallel(
+          precondition: (context) => true,
+        )..registerParallel(
             Parallel(
               name: 'Parallel Tasks',
               tasks: [
@@ -176,9 +150,7 @@ Job get _testJob4 => Job(
                 TestParallelTask(),
               ],
             ),
-          )
-          ..nextTask(SayHelloTask())
-          ..nextTask(SayWorldTask()),
+          ),
       );
 
 class TestTask extends Task<TestTask> {
@@ -186,35 +158,33 @@ class TestTask extends Task<TestTask> {
   void execute(ExecutionContext context) {
     // This parameter is shared just in this job.
     context.jobParameters['key'] = 'job_parameter';
-    // This parameter is shared just in this step.
-    context.stepParameters['key'] = 'step_parameter';
 
     // You can use shared parameters in any places.
-    info(context.sharedParameters['key1']);
-    info(context.sharedParameters['key2']);
+    log.info(context.sharedParameters['key1']);
+    log.info(context.sharedParameters['key2']);
 
-    trace('Trace');
-    info('Info');
-    debug('Debug');
-    warn('Warn');
-    error('Error');
-    fatal('Fatal');
+    log.trace('Trace');
+    log.info('Info');
+    log.debug('Debug');
+    log.warn('Warn');
+    log.error('Error');
+    log.fatal('Fatal');
   }
 }
 
 class SayHelloTask extends Task<SayHelloTask> {
   @override
   void execute(ExecutionContext context) {
-    debug('Hello,');
+    log.debug('Hello,');
   }
 }
 
 class SayWorldTask extends Task<SayWorldTask> {
   @override
   void execute(ExecutionContext context) {
-    info('World!');
-    context.jobExecution!.branchToSucceeded();
-    context.stepExecution!.branchToFailed();
+    log.info('World!');
+    context.jobExecution!.switchBranchToSucceeded();
+    context.stepExecution!.switchBranchToFailed();
   }
 }
 
@@ -250,7 +220,7 @@ class RetryTask extends Task<RetryTask> {
 
 class TestParallelTask extends ParallelTask<TestParallelTask> {
   @override
-  FutureOr<void> invoke() {
+  FutureOr<void> execute(ExecutionContext context) {
     int i = 0;
     while (i < 10000000000) {
       i++;

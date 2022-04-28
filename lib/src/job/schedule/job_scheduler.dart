@@ -23,18 +23,18 @@ class JobScheduler implements Runner {
 
   @override
   Future<void> run() async {
-    info('Detected ${_jobs.length} Jobs on the root');
+    log.info('Detected ${_jobs.length} Jobs on the root');
     for (final job in _jobs) {
-      info('Scheduling Job [name=${job.name}]');
+      log.info('Scheduling Job [name=${job.name}]');
       try {
         BatchInstance.updateStatus(BatchStatus.running);
-        info(
+        log.info(
           'Batch application is now running',
         );
         await JobLauncher(job: job).run();
-        warn('Preparing for shutdown the batch application safely');
+        log.warn('Preparing for shutdown the batch application safely');
       } catch (_) {
-        fatal('Shut down the application due to a fatal exception');
+        log.fatal('Shut down the application due to a fatal exception');
         rethrow;
       } finally {
         _dispose();
@@ -44,8 +44,8 @@ class JobScheduler implements Runner {
 
   void _dispose() {
     BatchInstance.updateStatus(BatchStatus.shuttingDown);
-    warn('Allocation memory is releasing');
-    warn('Shutdown the batch application');
+    log.warn('Allocation memory is releasing');
+    log.warn('Shutdown the batch application');
     Logger.instance.dispose();
     BatchInstance.updateStatus(BatchStatus.shutdown);
   }

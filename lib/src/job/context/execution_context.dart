@@ -24,7 +24,4 @@ class ExecutionContext {
 
   /// The job parameters
   final Parameters jobParameters = Parameters();
-
-  /// The step parameters
-  final Parameters stepParameters = Parameters();
 }
