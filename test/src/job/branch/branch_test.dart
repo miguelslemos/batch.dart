@@ -12,7 +12,7 @@ import 'package:batch/src/job/event/job.dart';
 
 void main() {
   test('Test Branch', () {
-    final to = Job(name: 'Job');
+    final to = Job(name: 'Job', steps: []);
     final branch = Branch<Job>(
       on: BranchStatus.completed,
       to: to,

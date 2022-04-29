@@ -1,5 +1,39 @@
 # Release Note
 
+## v1.3.0
+
+- Added `runWorkflow` method as an application entry point and deprecated `BatchApplication`. ([#180](https://github.com/batch-dart/batch.dart/issues/180))
+
+## v1.2.0
+
+- Eliminated the `addSchedule` method and added a `jobs` field to the `BatchApplication` constructor to specify the `ScheduledJobBuilder`. ([#171](https://github.com/batch-dart/batch.dart/issues/171))
+- Added `argsConfigBuilder` callback to `BatchApplication` to more easily build `ArgParser`. ([#174](https://github.com/batch-dart/batch.dart/issues/174))
+- Eliminated the `addSharedParameter` method from `BatchApplication` and added the `sharedParameters` argument to the constructor of `BatchApplication`. ([#173](https://github.com/batch-dart/batch.dart/issues/173))
+- Add `jobParameters` argument to the `Job` and `ScheduledJob` constructors. ([#177](https://github.com/batch-dart/batch.dart/issues/177))
+
+## v1.1.0
+
+- Eliminated `nextStep` when adding steps and added `steps` to the `Job` and `ScheduledJob` constructors. This necessitates a change in the procedure for adding steps. ([#164](https://github.com/batch-dart/batch.dart/issues/164))
+- Changed the `nextSchedule` method to the `addSchedule` method when adding a scheduled job to the `BatchApplication`. ([#167](https://github.com/batch-dart/batch.dart/issues/167))
+
+## v1.0.1
+
+- Fixed `README.md`.
+- Refactored dependencies. ([#160](https://github.com/batch-dart/batch.dart/issues/160))
+
+## v1.0.0
+
+- Made changes to the specifications to make it easier and safer to use the framework.
+  - The method of adding Tasks to Steps has been changed.
+  - Specify `Task` or `ParallelTask` in the constructor of `Step` or `ParallelStep`, not `registerStep` and `registerParallel`.
+  - The method to create branches are changed. Use`branchesOnSucceeded`, `branchesOnFailed`, `branchesOnCompleted` in the constructors of Events such as `Job` and `Step` instead of in the `createBranch...` methods.
+  - The method for setting up a job in `BatchApplication` has changed. Use the `nextSchedule` method instead of `addJob`. Also, pass a class that extends `ScheduledJobBuilder` to this `nextSchedule` method; the object that should be returned from `ScheduledJobBuilder` is `ScheduledJob`, which must be scheduled.
+  - `SkipConfiguration` and `RetryConfiguration` settings were limited to `Step` only. ([#145](https://github.com/batch-dart/batch.dart/issues/145))
+
+## v0.12.2
+
+- Enhanced `README.md`.
+
 ## v0.12.1
 
 - Enhanced `README.md` and added examples.
@@ -60,63 +94,38 @@
 
 ## v0.5.0
 
-### New Features
-
 - Added the feature to specify any exception type before application execution and skip exceptions that occur during application processing. Only classes that inherit from `Exception` are eligible; classes that inherit from `Error` are not eligible for this retry feature. ([#12](https://github.com/batch-dart/batch.dart/issues/12))
 - Added the feature to specify any exception type before application execution and retry when exception occurs during application processing. Only classes that inherit from `Exception` are eligible; classes that inherit from `Error` are not eligible for this skip feature. ([#20](https://github.com/batch-dart/batch.dart/issues/20))
 - Added convenient method `shutdown()` to shutdown application in `Step` ([#17](https://github.com/batch-dart/batch.dart/issues/17)).
-
-### Improvements
-
 - Precondition callback now supports asynchronous processing. ([#21](https://github.com/batch-dart/batch.dart/issues/21))
 - Callbacks (onStarted, onSucceeded, onError, onCompleted) now support asynchronous processing. ([#23](https://github.com/batch-dart/batch.dart/issues/23))
 
 ## v0.4.0
 
-### New Features
-
 - Added `onStarted`, `onSucceeded`, `onError` and `onCompleted` callbacks for `Job`, `Step` and `Task`.
 - Added feature to specify the color of the message when logging out with `LogColor` and `ConsoleColor`.
 - Improved log message from framework.
 - Added convenient method `shutdown()` to shutdown the application from `Task`.
-
-### Destructive Changes
-
 - Changed to define `Precondition` as an anonymous function.
 
 ## v0.3.0
 
-### New Features
-
 - Added `Precondition` to check the preconditions for executing `Job`, `Step` and `Task`.
 - Conditional branching is now possible for the all layers (`Job`/`Step`/`Task`) based on `BranchStatus` by using the `branchOnSucceeded`, `branchOnFailed` and `branchOnCompleted`.
 - Due to the feature to create branches in `Job`, the schedule argument of the `Job` object is no longer required. However, be sure to set up a schedule for the root `Job`s.
-
-### Destructive Changes
-
 - Changed the type of the argument when specifying `Job` scheduling. Now you can use `CronParser` to specify the schedule in Cron format.
 
 ## v0.2.1
 
-### New Features
-
 - Added `DefaultLogFilter`.
 - Added `Precondition` to check the starting condition of `Job` and `Step`. It can be specified as an argument when creating `Job` and `Step` instances.
-
-### Destructive Changes
-
 - Deleted `DevelopmentLogFilter` and `ProductionLogFilter`.
 
 ## v0.2.0
 
-### New Features
-
 - Added logging feature. Some logs are automatically output to the console during batch processing, but you can output logs at any log level by using the various methods for log output.
 - Enabled parameter exchange between tasks in the same step.
 - Added the concept of SharedParameters, which are shared by the entire batch application.
-
-### Destructive Changes
-
 - Refactored the structure, made `JobLauncher` private and released `BatchApplication` as new entry point.
 - Added ExecutionContext as an argument to the execute method of the Task class.
 

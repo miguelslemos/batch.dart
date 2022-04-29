@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-A lightweight and powerful Job Scheduling Framework.
+  <b>A Lightweight and Powerful Job Scheduling Framework.</b>
 </p>
 
 ---
@@ -27,16 +27,24 @@ A lightweight and powerful Job Scheduling Framework.
 
 ---
 
+**_Do you need a scheduled and long-lived server-side processing?_**</br>
+**_If so, this is the framework you are looking for!_**
+
+- Implementation examples are available at: [Official Examples](https://github.com/batch-dart/examples/blob/main/README.md) </br>
+- Or more documentations are available at: [Official Documents](https://github.com/batch-dart/documents/blob/main/README.md)
+
+---
+
 <!-- TOC -->
 
-- [1. About](#1-about)
+- [1. Guide](#1-guide)
   - [1.1. Mission](#11-mission)
   - [1.2. Features](#12-features)
-  - [1.3. Basic Usage](#13-basic-usage)
+  - [1.3. Getting Started](#13-getting-started)
     - [1.3.1. Install Library](#131-install-library)
     - [1.3.2. Import](#132-import)
     - [1.3.3. Basic Concept](#133-basic-concept)
-    - [1.3.4. Configure Job Schedules](#134-configure-job-schedules)
+    - [1.3.4. Schedule Jobs](#134-schedule-jobs)
       - [1.3.4.1. Sequential Process](#1341-sequential-process)
       - [1.3.4.2. Parallel Process](#1342-parallel-process)
     - [1.3.5. Logging](#135-logging)
@@ -51,38 +59,37 @@ A lightweight and powerful Job Scheduling Framework.
 
 <!-- /TOC -->
 
-# 1. About
-
-The `Batch.dart` specification is large and more detailed documentation can be found from [Official Documents](https://batch-dart.github.io/documents).
-Also you can find detail examples of implementation at [here](https://pub.dev/packages/batch/example) or [Official Examples](https://github.com/batch-dart/examples/blob/main/README.md).
+# 1. Guide
 
 ## 1.1. Mission
 
-The goal of this project is to provide a **_high-performance_** and **_intuitive_** job scheduling framework in the Dart language ecosystem that anyone can use in the world.
+The goal of this project is to provide a **_high-performance_** and **_intuitive_** job scheduling in the Dart language.
+And to enable people around the world to automate their tasks more easily.
 
 And the development concept of this framework is "[DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)", "[KISS](https://en.wikipedia.org/wiki/KISS_principle)" and "[YAGNI](https://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it)", which has been said in software engineering circles for a long time.
 
 ## 1.2. Features
 
-- Easy and intuitive job scheduling.
+- **Easy** and **intuitive** job scheduling.
 - No complicated configuration files.
-- Supports scheduling in [Cron](https://en.wikipedia.org/wiki/Cron) format as standard and customizable.
-- Supports powerful logging feature as standard and customizable.
-- Supports easily define parallel processes.
-- Supports conditional branching of jobs.
-- Supports extensive callback functions at each event.
-- Supports skipping and retrying according to user defined conditions.
+- Supports scheduling in [Cron](https://en.wikipedia.org/wiki/Cron) format.
+- Supports powerful **logging feature** and it's **customizable**.
+- Supports easily define **parallel processes**.
+- Supports **conditional branching** of jobs and steps.
+- Supports **convenient callback** functions at each event.
+- Supports **skipping** and **retrying** according to user defined conditions.
+- and etc...
 
-## 1.3. Basic Usage
+## 1.3. Getting Started
 
 ### 1.3.1. Install Library
 
-```terminal
+```bash
  dart pub add batch
 ```
 
 > Note:
-> In pub.dev, the automatic determination at the time of release of this library labels it as usable in Flutter, but it is not suitable by any stretch of the imagination.
+> Pub.dev automatically labels this library as usable for Flutter, but the intended use of this library is long-lived server-side processing.
 
 ### 1.3.2. Import
 
@@ -97,49 +104,60 @@ import 'package:batch/batch.dart';
 `Batch.dart` represents the unit of scheduled processing as an `Event`.
 And `Event` is composed of the following elements.
 
-1. **Job** - The largest unit.
-2. **Step** - The intermediate unit.
-3. **Task** - The smallest unit.
-4. **Parallel** - It's kind of Task but represents parallel processes.
+|                  | Description                                                                                                           |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **Job**          | This `Job` event is a unit of batch processing in the broad sense. And `Job` has multiple `Step` events.              |
+| **ScheduledJob** | It represents a scheduled job. And `ScheduledJob` has multiple `Step` events.                                         |
+| **Step**         | This event expresses the sequential processing. Each `Step` has a `Task` that defines one specific process.           |
+| **ParallelStep** | This event expresses the parallel processing. Each `ParallelStep` has `ParallelTask`s that define specific processes. |
 
-**_You can see more information about `Event` at [here](https://github.com/batch-dart/documents/blob/main/resources/01_fundamentals.md#11-event)._**
-
-### 1.3.4. Configure Job Schedules
+### 1.3.4. Schedule Jobs
 
 #### 1.3.4.1. Sequential Process
 
-When defining a simple sequential process, all that is required is to define a class that extends `Task` and implements the `execute` method.
+Scheduling jobs using this framework is very easy.
+
+First, create a class that defines a class extends the `Task` class and define processes in `execute` method. The `execute` method can define any process and supports both **synchronous** and **asynchronous** processing.
+
+Second, you need to define a scheduled job. It is also easy to define a scheduled job by implementing the `build` method in a class that implements `ScheduledJobBuilder`, as in the following example. And `Batch.dart` supports standard `Cron` specifications.
+
+Finally, let's execute `runWorkflow` method on main method with scheduled jobs as arguments!
+
+When the `runWorkflow` method is executed, the scheduled batch process is started.
 
 **_Example_**
 
 ```dart
 import 'package:batch/batch.dart';
 
-void main() => BatchApplication()
-      ..addJob(
-        // Scheduled to start every minute in Cron format
-        Job(name: 'Job', schedule: CronParser(value: '*/1 * * * *'))
-          // Step phase
-          ..nextStep(Step(name: 'Step')
-            // Task phase
-            ..registerTask(DoSomethingTask()
-          ),
-        ),
-      )
-      ..run();
+void main() => runWorkflow(
+      jobs: [SayHelloWorldJob()],
+    );
 
 
-class DoSomethingTask extends Task<DoSomethingTask> {
+class SayHelloWorldJob implements ScheduledJobBuilder {
+  @override
+  ScheduledJob build() => ScheduledJob(
+        name: 'Test Job',
+        schedule: CronParser('*/2 * * * *'), // Execute every 2 minutes
+        steps: [
+          Step(
+            name: 'Test Step',
+            task: SayHelloWorldTask(),
+          )
+        ],
+      );
+}
+
+class SayHelloWorldTask extends Task<SayHelloWorldTask> {
   @override
   void execute(ExecutionContext context) {
-    // Write your code here.
+    log.info('Hello, World!');
   }
 }
 ```
 
-The above example is a very simple, and so you should refer to other documents also for more detailed specifications and implementation instructions.
-
-**_You can see more details at [Official Documents](https://batch-dart.github.io/documents) or [Official Examples](https://github.com/batch-dart/examples/blob/main/README.md)._**
+**_You can see more examples at [Official Examples](https://github.com/batch-dart/examples/blob/main/README.md)._**
 
 #### 1.3.4.2. Parallel Process
 
@@ -156,28 +174,28 @@ import 'dart:async';
 
 import 'package:batch/batch.dart';
 
-void main() => BatchApplication()
-      ..addJob(
-        // Scheduled to start every minute in Cron format
-        Job(name: 'Job', schedule: CronParser(value: '*/1 * * * *'))
-          // Step phase
-          ..nextStep(Step(name: 'Step')
-            // Parallel task phase
-            ..registerParallel(
-              Parallel(
-                name: 'Parallel Tasks',
-                tasks: [
-                  DoHeavyTask(),
-                  DoHeavyTask(),
-                  DoHeavyTask(),
-                  DoHeavyTask(),
-                ],
-              ),
-            )
-          ),
-        ),
-      )
-      ..run();
+void main() => runWorkflow(
+      jobs: [DoHeavyProcessJob()],
+    );
+
+class DoHeavyProcessJob implements ScheduledJobBuilder {
+  @override
+  ScheduledJob build() => ScheduledJob(
+        name: 'Job',
+        schedule: CronParser('*/2 * * * *'), // Execute every 2 minutes
+        steps: [
+          ParallelStep(
+            name: 'Parallel Step',
+            tasks: [
+              DoHeavyTask(),
+              DoHeavyTask(),
+              DoHeavyTask(),
+              DoHeavyTask(),
+            ],
+          )
+        ],
+      );
+}
 
 
 class DoHeavyTask extends ParallelTask<DoHeavyTask> {
@@ -248,9 +266,9 @@ yyyy-MM-dd 19:25:10.597692 [info ] (JobScheduler.run:56:9         ) - Job schedu
 ```
 
 > Note:
-> The setup of the logger is done when executing the method `run` in `BatchApplication`.
-> If you want to use the logging feature outside the life cycle of the `batch` library,
-> be sure to do so after executing the `run` method of the `BatchApplication`.
+> The setup of the logger is done when executing the `runWorkflow`.
+> If you want to use the logging feature outside the life cycle of this library,
+> be sure to do so after executing the `runWorkflow`.
 
 #### 1.3.5.2. On Parallel Process
 
@@ -270,7 +288,7 @@ Instead, use the following methods in classes that extend `ParallelTask` for par
 ```dart
 class TestParallelTask extends ParallelTask<TestParallelTask> {
   @override
-  FutureOr<void> invoke() {
+  FutureOr<void> execute() {
     super.sendMessageAsTrace('Trace');
     super.sendMessageAsDebug('Debug');
     super.sendMessageAsInfo('Info');
@@ -307,25 +325,24 @@ Creating a branch for each event is very easy.
 **_To create branch_**
 
 ```dart
-Step(name: 'Step')
-  // Assume that this task will change the branch status.
-  ..registerTask(ChangeBranchStatusTask())
+    Step(
+      name: 'Step',
+      task: SwitchBranchStatusTask(),
 
-  // Pass an event object to "to" argument that you want to execute when you enter this branch.
-  ..createBranchOnSucceeded(to: Step(name: 'Step on succeeded')..registerTask(somethingTask))
-  ..createBranchOnFailed(to: Step(name: 'Step on failed')..registerTask(somethingTask))
-
-  // Branches that are "createBranchOnCompleted" are always executed regardless of branch status.
-  ..createBranchOnCompleted(to: Step(name: 'Step on completed'))..registerTask(somethingTask);
+      // Each branch can be multiple and nested
+      branchesOnSucceeded: [Step(name: 'Step on succeeded', task: doSomethingTask)],
+      branchesOnFailed: [Step(name: 'Step on failed', task: doSomethingTask)],
+      branchesOnCompleted: [Step(name: 'Step on completed', task: doSomethingTask)],
+    );
 ```
 
-And the conditional branching of `Batch.dart` is controlled by changing the `BranchStatus` of each `Execution`s that can be referenced from the `ExecutionContext`.
+And the conditional branching of `Batch.dart` is controlled by switching the `BranchStatus` of each `Execution`s that can be referenced from the `ExecutionContext`.
 The default branch status is "**completed**".
 
 **_To manage branch_**
 
 ```dart
-class ChangeBranchStatusTask extends Task<ChangeBranchStatusTask> {
+class SwitchBranchStatusTask extends Task<SwitchBranchStatusTask> {
   @override
   void execute(ExecutionContext context) {
     // You can easily manage branch status through methods as below.
@@ -334,9 +351,6 @@ class ChangeBranchStatusTask extends Task<ChangeBranchStatusTask> {
   }
 }
 ```
-
-> Note:
-> Branch creation is not supported for `Task` and `Parallel`.
 
 ## 1.4. More Examples
 
@@ -361,7 +375,7 @@ Owner will respond to issues and review pull requests as quickly as possible.
 
 The simplest way to show us your support is by giving the project a star at [here](https://github.com/batch-dart/batch.dart).
 
-And I'm always looking for sponsors to support this project. I'm not asking for royalties for use in providing this framework, but I do need support to continue ongoing open source development.
+And I'm always looking for sponsors to support this project. I do need support to continue ongoing open source development.
 
 Sponsors can be individuals or corporations, and the amount is optional.
 
@@ -393,8 +407,7 @@ All resources of `Batch.dart` is provided under the `BSD-3` license.
 - [Creator Profile](https://github.com/myConsciousness)
 - [License](https://github.com/batch-dart/batch.dart/blob/main/LICENSE)
 - [API Document](https://pub.dev/documentation/batch/latest/batch/batch-library.html)
-- [Official Documents [Markdown]](https://github.com/batch-dart/documents/blob/main/README.md)
-- [Official Documents [Web]](https://batch-dart.github.io/documents)
+- [Official Documents](https://github.com/batch-dart/documents/blob/main/README.md)
 - [Official Examples](https://github.com/batch-dart/examples/blob/main/README.md)
 - [Wikipedia](https://ja.wikipedia.org/wiki/Batch.dart)
 - [Release Note](https://github.com/batch-dart/batch.dart/releases)

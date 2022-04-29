@@ -6,9 +6,9 @@
 import 'package:batch/src/job/branch/branch_status.dart';
 import 'package:batch/src/job/context/execution_context.dart';
 import 'package:batch/src/job/context/execution_stack.dart';
+import 'package:batch/src/job/event/base_step.dart';
 import 'package:batch/src/job/event/event.dart';
 import 'package:batch/src/job/event/job.dart';
-import 'package:batch/src/job/event/step.dart';
 import 'package:batch/src/job/execution.dart';
 import 'package:batch/src/job/execution_type.dart';
 import 'package:batch/src/job/parameter/shared_parameters.dart';
@@ -36,14 +36,12 @@ abstract class ContextSupport<T extends Event<T>> {
       context.jobExecution = _newExecution(name);
       log.info(
           'Job:  [name=$name] launched with the following shared parameters: ${SharedParameters.instance}');
-    } else if (T == Step) {
+    } else if (T == BaseStep) {
       context.stepExecution = _newExecution(name);
       log.info(
           'Step: [name=$name] launched with the following job parameters: ${context.jobParameters}');
     } else {
-      context.taskExecution = _newExecution(name);
-      log.info(
-          'Task: [name=$name] launched with the following job parameters: ${context.jobParameters}');
+      throw UnsupportedError('The event type is not supported.');
     }
   }
 
@@ -69,14 +67,12 @@ abstract class ContextSupport<T extends Event<T>> {
       context.jobExecution = _finishedExecution(status: status);
       log.info(
           'Job:  [name=${context.jobExecution!.name}] finished with the following shared parameters: ${SharedParameters.instance} and the status: [${status.name}]');
-    } else if (T == Step) {
+    } else if (T == BaseStep) {
       context.stepExecution = _finishedExecution(status: status);
       log.info(
           'Step: [name=${context.stepExecution!.name}] finished with the following job parameters: ${context.jobParameters} and the status: [${status.name}]');
     } else {
-      context.taskExecution = _finishedExecution(status: status);
-      log.info(
-          'Task: [name=${context.taskExecution!.name}] finished with the following job parameters: ${context.jobParameters} and the status: [${status.name}]');
+      throw UnsupportedError('The event type is not supported.');
     }
   }
 
@@ -108,11 +104,11 @@ abstract class ContextSupport<T extends Event<T>> {
   ExecutionType get _executionType {
     if (T == Job) {
       return ExecutionType.job;
-    } else if (T == Step) {
+    } else if (T == BaseStep) {
       return ExecutionType.step;
+    } else {
+      throw UnsupportedError('The event type is not supported.');
     }
-
-    return ExecutionType.task;
   }
 
   /// Returns the branch status.

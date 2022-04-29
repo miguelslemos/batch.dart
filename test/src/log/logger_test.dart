@@ -11,7 +11,7 @@ import 'package:batch/src/log/logger.dart';
 
 void main() {
   test('Test Logger', () {
-    final logger = Logger.loadFrom(config: LogConfiguration());
+    final logger = Logger.loadFromConfig(LogConfiguration());
     expect(() => logger.trace('test trace'), returnsNormally);
     expect(() => logger.debug('test debug'), returnsNormally);
     expect(() => logger.info('test info'), returnsNormally);
@@ -23,7 +23,7 @@ void main() {
   });
 
   test('Test Logger after dispose', () {
-    final logger = Logger.loadFrom(config: LogConfiguration());
+    final logger = Logger.loadFromConfig(LogConfiguration());
     logger.dispose();
 
     expect(
@@ -39,7 +39,7 @@ void main() {
   });
 
   test('Test when error is StackTrace', () {
-    final logger = Logger.loadFrom(config: LogConfiguration());
+    final logger = Logger.loadFromConfig(LogConfiguration());
 
     expect(
       () => logger.warn('error is StackTrace', StackTrace.current),

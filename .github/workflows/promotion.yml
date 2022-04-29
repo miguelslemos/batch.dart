@@ -1,0 +1,25 @@
+name: Promotion
+
+on:
+  schedule:
+    - cron: '0 20 */2 * *'
+
+jobs:
+  publishing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Promotion Tweet
+        uses: snow-actions/tweet@v1.1.2
+        with:
+          status: |
+            Hi #developers, this is a #promotion #tweet via #GitHub Actions! 🐦
+            Batch.dart is a #framework made by #Dart that provides powerful support for scheduled, long-lived server-side processing 🍻 Also issues and pull requests are always welcome, thank you!
+
+            #dartlang #programming #coding
+
+            https://github.com/batch-dart/batch.dart
+        env:
+          CONSUMER_API_KEY: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
+          CONSUMER_API_SECRET_KEY: ${{ secrets.TWITTER_CONSUMER_API_SECRET_KEY }}
+          ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}

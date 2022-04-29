@@ -17,10 +17,10 @@ jobs:
         uses: snow-actions/tweet@v1.1.2
         with:
           status: |
-            Hey what's up?🍿 New version of Batch.dart was released!🐦🐦🐦
+            Hey what's up? 🍿 New version of Batch.dart was released! 🐦🐦🐦
             Release note: https://github.com/batch-dart/batch.dart/blob/main/CHANGELOG.md
 
-            #dart #framework #github #pubdev
+            #dart #dartlang #framework #github #pubdev #programming #100DaysOfCode
 
             This tweet was sent from GitHub Actions workflow at https://github.com/batch-dart/batch.dart
         env:

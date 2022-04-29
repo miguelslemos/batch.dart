@@ -12,7 +12,7 @@ import 'package:batch/src/log/logger_provider.dart';
 
 void main() {
   test('Test LoggerProvider', () {
-    final logger = Logger.loadFrom(config: LogConfiguration());
+    final logger = Logger.loadFromConfig(LogConfiguration());
 
     expect(log.trace, isNotNull);
     expect(log.debug, isNotNull);

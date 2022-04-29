@@ -5,5 +5,4 @@
 enum ExecutionType {
   job,
   step,
-  task,
 }

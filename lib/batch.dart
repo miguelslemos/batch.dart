@@ -11,9 +11,10 @@ export 'package:batch/src/batch_application.dart';
 
 // Job features
 export 'package:batch/src/job/event/job.dart';
+export 'package:batch/src/job/event/scheduled_job.dart';
 export 'package:batch/src/job/event/step.dart';
-export 'package:batch/src/job/event/task.dart';
-export 'package:batch/src/job/event/parallel.dart';
+export 'package:batch/src/job/event/parallel_step.dart';
+export 'package:batch/src/job/task/task.dart';
 export 'package:batch/src/job/task/parallel_task.dart';
 export 'package:batch/src/job/context/execution_context.dart';
 export 'package:batch/src/job/execution.dart';
@@ -21,6 +22,7 @@ export 'package:batch/src/job/execution_type.dart';
 export 'package:batch/src/job/schedule/parser/cron_parser.dart';
 export 'package:batch/src/job/config/skip_configuration.dart';
 export 'package:batch/src/job/config/retry_configuration.dart';
+export 'package:batch/src/job/builder/scheduled_job_builder.dart';
 
 // Logging features
 export 'package:batch/src/log/log_configuration.dart';

@@ -4,7 +4,7 @@
 
 // Project imports:
 import 'package:batch/src/job/error/schedule_parse_error.dart';
-import 'package:batch/src/job/schedule/model/cron.dart';
+import 'package:batch/src/job/schedule/model/cron_schedule.dart';
 import 'package:batch/src/job/schedule/parser/schedule_parser.dart';
 
 /// The convenient parser for Cron schedule.
@@ -23,11 +23,9 @@ import 'package:batch/src/job/schedule/parser/schedule_parser.dart';
 /// | +---------- Minutes   (range: 0-59)
 /// +------------ Seconds   (range: 0-59, it will be interpreted as "*" if it's omitted)
 /// ```
-class CronParser extends ScheduleParser<Cron> {
+class CronParser implements ScheduleParser<CronSchedule> {
   /// Returns the new instance of [CronParser].
-  CronParser({
-    required String value,
-  }) : _value = value;
+  CronParser(String value) : _value = value;
 
   /// The value in cron format
   final String _value;
@@ -36,7 +34,7 @@ class CronParser extends ScheduleParser<Cron> {
   final _whitespaceRegExp = RegExp('\\s+');
 
   @override
-  Cron parse() {
+  CronSchedule parse() {
     List<String?> fields = _value
         .split(_whitespaceRegExp)
         .where((part) => part.isNotEmpty)
@@ -74,7 +72,7 @@ The Cron format needs to consist of 5 fields at least.
     );
   }
 
-  Cron _parse({
+  CronSchedule _parse({
     required String? seconds,
     required String? minutes,
     required String? hours,
@@ -98,7 +96,7 @@ The Cron format needs to consist of 5 fields at least.
         .toSet()
         .toList();
 
-    return Cron(
+    return CronSchedule(
       seconds: parsedSeconds,
       minutes: parsedMinutes,
       hours: parsedHours,

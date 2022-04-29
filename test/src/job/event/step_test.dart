@@ -8,11 +8,12 @@ import 'package:test/test.dart';
 // Project imports:
 import 'package:batch/src/job/context/execution_context.dart';
 import 'package:batch/src/job/event/step.dart';
-import 'package:batch/src/job/event/task.dart';
+import 'package:batch/src/job/task/shutdown_task.dart';
+import 'package:batch/src/job/task/task.dart';
 
 void main() {
   test('Test Step with name parameter', () async {
-    final step = Step(name: 'Step');
+    final step = Step(name: 'Step', task: _Task());
     expect(step.name, 'Step');
     expect(step.precondition, null);
     expect(step.onStarted, null);
@@ -28,24 +29,14 @@ void main() {
   });
 
   test('Test nextTask', () {
-    final step = Step(name: 'Step');
-    expect(step.name, 'Step');
-    expect(step.hasTask, isFalse);
-
     final task = _Task();
-    step.registerTask(task);
-    expect(step.hasTask, isTrue);
-    expect(step.task, task);
+    final step = Step(name: 'Step', task: task);
+    expect(step.tasks.first, task);
   });
 
   test('Test shutdown', () {
-    final step = Step(name: 'Step');
-    expect(step.name, 'Step');
-    expect(step.hasTask, isFalse);
-
-    step.shutdown();
-    expect(step.hasTask, isTrue);
-    expect(step.task.name, 'ShutdownTask');
+    final step = Step.ofShutdown();
+    expect(step.tasks.first is ShutdownTask, isTrue);
   });
 }
 

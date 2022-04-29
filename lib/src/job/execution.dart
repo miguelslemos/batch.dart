@@ -66,10 +66,6 @@ class Execution {
   bool get isCompleted => _status == ProcessStatus.completed;
 
   void _updateBranchStatus(final BranchStatus status) {
-    if (type == ExecutionType.task) {
-      throw UnsupportedError('Branches in Task execution are not supported.');
-    }
-
     _branchStatus = status;
     _updatedAt = DateTime.now();
   }

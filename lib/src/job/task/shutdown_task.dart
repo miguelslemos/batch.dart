@@ -4,7 +4,7 @@
 
 // Project imports:
 import 'package:batch/src/job/context/execution_context.dart';
-import 'package:batch/src/job/event/task.dart';
+import 'package:batch/src/job/task/task.dart';
 
 /// This is a convenience class that only notifies about application shutdown.
 class ShutdownTask extends Task<ShutdownTask> {

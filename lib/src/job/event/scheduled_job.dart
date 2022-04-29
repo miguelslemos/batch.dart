@@ -8,24 +8,24 @@ import 'dart:async';
 // Project imports:
 import 'package:batch/src/job/context/execution_context.dart';
 import 'package:batch/src/job/event/base_step.dart';
-import 'package:batch/src/job/event/event.dart';
+import 'package:batch/src/job/event/job.dart';
+import 'package:batch/src/job/schedule/parser/schedule_parser.dart';
 
 /// This object represents the largest unit of events in the workflow.
 ///
-/// This event must have multiple [steps], but need not be scheduled. In other words,
-/// this [Job] event is expected to be executed immediately when the execution conditions
-/// are met from the `branch` specification. It is similar to `ScheduledJob`, but
-/// differs in that it **may** or **may not** be scheduled.
+/// This event must have multiple [steps] and the [schedule] is required. It is
+/// similar to [Job], but differs in that it **may** or **may not** be scheduled.
 ///
-/// In addition, the [Job] event can set [jobParameters] parameters that are shared
-/// in scope between [BaseStep]s associated with this [Job]. This is a similar specification to
+/// In addition, the [ScheduledJob] event can set [jobParameters] parameters that are shared
+/// in scope between [BaseStep]s associated with this [ScheduledJob]. This is a similar specification to
 /// `SharedParameters`, except that the scope in which the parameters are shared is different.
-class Job extends Event<Job> {
-  /// Returns the new instance of [Job].
-  Job({
+class ScheduledJob extends Job {
+  /// Returns the new instance of [ScheduledWorkflow].
+  ScheduledJob({
     required String name,
-    required this.steps,
-    this.jobParameters = const {},
+    required this.schedule,
+    required List<BaseStep> steps,
+    Map<String, dynamic> jobParameters = const {},
     FutureOr<bool> Function(ExecutionContext context)? precondition,
     Function(ExecutionContext context)? onStarted,
     Function(ExecutionContext context)? onSucceeded,
@@ -37,6 +37,8 @@ class Job extends Event<Job> {
     List<Job> branchesOnCompleted = const [],
   }) : super(
           name: name,
+          steps: steps,
+          jobParameters: jobParameters,
           precondition: precondition,
           onStarted: onStarted,
           onError: onError,
@@ -47,9 +49,6 @@ class Job extends Event<Job> {
           branchesOnCompleted: branchesOnCompleted,
         );
 
-  /// The steps
-  final List<BaseStep> steps;
-
-  /// The initial job parameters.
-  final Map<String, dynamic> jobParameters;
+  /// The schedule
+  final ScheduleParser schedule;
 }

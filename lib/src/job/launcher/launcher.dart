@@ -9,10 +9,8 @@ import 'package:batch/src/job/context/context_support.dart';
 import 'package:batch/src/job/context/execution_context.dart';
 import 'package:batch/src/job/event/event.dart';
 import 'package:batch/src/log/logger_provider.dart';
-import 'package:batch/src/runner.dart';
 
-abstract class Launcher<T extends Event<T>> extends ContextSupport<T>
-    implements Runner {
+abstract class Launcher<T extends Event<T>> extends ContextSupport<T> {
   /// Returns the new instance of [Launcher].
   Launcher({
     required ExecutionContext context,

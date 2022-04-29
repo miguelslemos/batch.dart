@@ -15,7 +15,7 @@ import 'package:batch/src/job/context/execution_context.dart';
 import 'package:batch/src/job/policy/retry_policy.dart';
 import 'package:batch/src/job/policy/skip_policy.dart';
 
-/// This is an abstract class that represents an event in Job execution.
+/// The base class with specifications common to all events.
 abstract class Event<T extends Event<T>> {
   /// Returns the new instance of [Event].
   Event({
@@ -27,10 +27,25 @@ abstract class Event<T extends Event<T>> {
     this.onCompleted,
     SkipConfiguration? skipConfig,
     RetryConfiguration? retryConfig,
+    List<T> branchesOnSucceeded = const [],
+    List<T> branchesOnFailed = const [],
+    List<T> branchesOnCompleted = const [],
   })  : skipPolicy =
             skipConfig != null ? SkipPolicy(skipConfig: skipConfig) : null,
         retryPolicy =
-            retryConfig != null ? RetryPolicy(retryConfig: retryConfig) : null;
+            retryConfig != null ? RetryPolicy(retryConfig: retryConfig) : null {
+    for (final branchOnSucceeded in branchesOnSucceeded) {
+      _createBranchOnSucceeded(to: branchOnSucceeded);
+    }
+
+    for (final branchOnFailed in branchesOnFailed) {
+      _createBranchOnFailed(to: branchOnFailed);
+    }
+
+    for (final branchOnCompleted in branchesOnCompleted) {
+      _createBranchOnCompleted(to: branchOnCompleted);
+    }
+  }
 
   /// The name
   final String name;
@@ -67,19 +82,6 @@ abstract class Event<T extends Event<T>> {
   Future<bool> shouldLaunch(ExecutionContext context) async =>
       await precondition?.call(context) ?? true;
 
-  /// Add a branch in case the parent process is succeeded.
-  void createBranchOnSucceeded({required T to}) =>
-      _addNewBranch(on: BranchStatus.succeeded, to: to);
-
-  /// Adds a branch in case the parent process is failed.
-  void createBranchOnFailed({required T to}) =>
-      _addNewBranch(on: BranchStatus.failed, to: to);
-
-  /// Adds a branch in case the parent process is completed regardless success
-  /// and failure of the process.
-  void createBranchOnCompleted({required T to}) =>
-      _addNewBranch(on: BranchStatus.completed, to: to);
-
   /// Returns true if this event has branch, otherwise false.
   bool get hasBranch => branches.isNotEmpty;
 
@@ -88,6 +90,19 @@ abstract class Event<T extends Event<T>> {
 
   /// Returns true if this event has retry policy, otherwise false.
   bool get hasRetryPolicy => retryPolicy != null;
+
+  /// Add a branch in case the parent process is succeeded.
+  void _createBranchOnSucceeded({required T to}) =>
+      _addNewBranch(on: BranchStatus.succeeded, to: to);
+
+  /// Adds a branch in case the parent process is failed.
+  void _createBranchOnFailed({required T to}) =>
+      _addNewBranch(on: BranchStatus.failed, to: to);
+
+  /// Adds a branch in case the parent process is completed regardless success
+  /// and failure of the process.
+  void _createBranchOnCompleted({required T to}) =>
+      _addNewBranch(on: BranchStatus.completed, to: to);
 
   /// Adds new [Branch] based on [on] and [to].
   void _addNewBranch({required BranchStatus on, required T to}) =>

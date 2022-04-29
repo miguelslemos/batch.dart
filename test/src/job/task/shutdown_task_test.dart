@@ -19,7 +19,7 @@ void main() {
     expect(BatchInstance.isRunning, true);
 
     //! Required to load logger to run Shutdown task.
-    Logger.loadFrom(config: LogConfiguration(printLog: false));
+    Logger.loadFromConfig(LogConfiguration(printLog: false));
 
     final task = ShutdownTask();
     expect(() => task.execute(ExecutionContext()), returnsNormally);

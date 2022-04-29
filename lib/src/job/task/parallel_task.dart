@@ -7,8 +7,8 @@ import 'dart:async';
 
 // Project imports:
 import 'package:batch/src/job/context/execution_context.dart';
-import 'package:batch/src/job/event/task.dart';
 import 'package:batch/src/job/parallel/parallel_task_support.dart';
+import 'package:batch/src/job/task/task.dart';
 
 abstract class ParallelTask<T extends Task<T>> extends Task<T>
     with ParallelTaskSupport {

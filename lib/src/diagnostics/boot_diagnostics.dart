@@ -5,46 +5,52 @@
 // Project imports:
 import 'package:batch/src/diagnostics/name_relation.dart';
 import 'package:batch/src/diagnostics/name_relations.dart';
+import 'package:batch/src/job/builder/scheduled_job_builder.dart';
 import 'package:batch/src/job/error/unique_constraint_error.dart';
 import 'package:batch/src/job/event/job.dart';
-import 'package:batch/src/job/event/step.dart';
+import 'package:batch/src/job/event/scheduled_job.dart';
 import 'package:batch/src/log/logger_provider.dart';
-import 'package:batch/src/runner.dart';
 
-abstract class BootDiagnostics implements Runner {
+abstract class BootDiagnostics {
   /// Returns the new instance of [BootDiagnostics].
-  factory BootDiagnostics({required List<Job> jobs}) =>
-      _BootDiagnostics(jobs: jobs);
+  factory BootDiagnostics(List<ScheduledJobBuilder> scheduledJobs) =>
+      _BootDiagnostics(scheduledJobs: scheduledJobs);
+
+  /// Returns the checked scheduled jobs.
+  List<ScheduledJob> execute();
 }
 
 class _BootDiagnostics implements BootDiagnostics {
   /// Returns the new instance of [_BootDiagnostics].
-  _BootDiagnostics({required List<Job> jobs}) : _jobs = jobs;
+  _BootDiagnostics({required List<ScheduledJobBuilder> scheduledJobs})
+      : _scheduledJobs = scheduledJobs;
 
-  /// The jobs
-  final List<Job> _jobs;
+  /// The scheduled jobs
+  final List<ScheduledJobBuilder> _scheduledJobs;
 
   /// The name relations
   final _nameRelations = NameRelations();
 
   @override
-  Future<void> run() async {
+  List<ScheduledJob> execute() {
     log.info('Batch application diagnostics have been started');
 
-    if (_jobs.isEmpty) {
+    if (_scheduledJobs.isEmpty) {
       throw ArgumentError('The job to be launched is required.');
     }
 
-    for (final job in _jobs) {
-      if (job.isNotScheduled) {
-        throw ArgumentError('Be sure to specify a schedule for the root job.');
-      }
+    final scheduledJobs = <ScheduledJob>[];
+    for (final job in _scheduledJobs) {
+      final scheduledJob = job.build();
+      scheduledJobs.add(scheduledJob);
 
-      _checkJobRecursively(job: job);
+      _checkJobRecursively(job: scheduledJob);
     }
 
     log.info('Batch application diagnostics have been completed');
     log.info('Batch applications can be started securely');
+
+    return scheduledJobs;
   }
 
   void _checkJobRecursively({required Job job}) {
@@ -63,13 +69,7 @@ class _BootDiagnostics implements BootDiagnostics {
     }
   }
 
-  void _checkStepRecursively({required Job job, required Step step}) {
-    if (!step.hasTask) {
-      throw ArgumentError(
-        'The task or parallel to be launched is required.',
-      );
-    }
-
+  void _checkStepRecursively({required Job job, required dynamic step}) {
     if (step.hasSkipPolicy && step.hasRetryPolicy) {
       throw ArgumentError(
           'You cannot set Skip and Retry at the same time in Step [name=${step.name}].');
