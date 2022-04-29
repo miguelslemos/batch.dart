@@ -8,22 +8,21 @@ import 'dart:async';
 // Project imports:
 import 'package:batch/src/batch_instance.dart';
 import 'package:batch/src/batch_status.dart';
-import 'package:batch/src/job/event/scheduled_job.dart';
+import 'package:batch/src/job/event/job.dart';
 import 'package:batch/src/job/launcher/job_launcher.dart';
 import 'package:batch/src/log/logger.dart';
 import 'package:batch/src/log/logger_provider.dart';
 
 class JobScheduler {
-  /// Returns the new instance of [JobScheduler].
-  JobScheduler(List<ScheduledJob> scheduledJobs)
-      : _scheduledJobs = scheduledJobs;
+  /// Returns the new instance of [Job].
+  JobScheduler(List<Job> job) : _jobs = job;
 
   /// The jobs
-  final List<ScheduledJob> _scheduledJobs;
+  final List<Job> _jobs;
 
   Future<void> run() async {
-    log.info('Detected ${_scheduledJobs.length} Jobs on the root');
-    for (final job in _scheduledJobs) {
+    log.info('Detected ${_jobs.length} Jobs on the root');
+    for (final job in _jobs) {
       log.info('Scheduling Job [name=${job.name}]');
       try {
         BatchInstance.updateStatus(BatchStatus.running);
