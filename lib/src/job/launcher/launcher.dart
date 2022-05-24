@@ -117,6 +117,7 @@ abstract class Launcher<T extends Event<T>> extends ContextSupport<T>
 
         rethrow;
       }
+      rethrow;
     } finally {
       if (!retry) {
         await event.onCompleted?.call(context);
