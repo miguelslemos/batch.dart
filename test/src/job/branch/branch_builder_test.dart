@@ -12,7 +12,7 @@ import 'package:batch/src/job/event/job.dart';
 
 void main() {
   test('Test BranchBuilder', () {
-    final to = Job(name: 'Job');
+    final to = Job(name: 'Job', steps: []);
     final builder = BranchBuilder<Job>();
     builder.on(BranchStatus.succeeded);
     builder.to(to);
@@ -23,7 +23,7 @@ void main() {
   });
 
   test('Test when builder has no on parameter', () {
-    final to = Job(name: 'Job');
+    final to = Job(name: 'Job', steps: []);
     final builder = BranchBuilder<Job>();
     builder.to(to);
 

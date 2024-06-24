@@ -5,9 +5,9 @@
 // Project imports:
 import 'package:batch/src/job/schedule/model/schedule.dart';
 
-class Cron extends Schedule {
-  /// Returns the new instance of [Cron].
-  Cron({
+class CronSchedule extends Schedule {
+  /// Returns the new instance of [CronSchedule].
+  CronSchedule({
     required List<int>? seconds,
     required List<int>? minutes,
     required List<int>? hours,

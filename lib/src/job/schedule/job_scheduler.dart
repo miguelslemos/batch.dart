@@ -12,16 +12,14 @@ import 'package:batch/src/job/event/job.dart';
 import 'package:batch/src/job/launcher/job_launcher.dart';
 import 'package:batch/src/log/logger.dart';
 import 'package:batch/src/log/logger_provider.dart';
-import 'package:batch/src/runner.dart';
 
-class JobScheduler implements Runner {
-  /// Returns the new instance of [JobScheduler].
-  JobScheduler({required List<Job> jobs}) : _jobs = jobs;
+class JobScheduler {
+  /// Returns the new instance of [Job].
+  JobScheduler(List<Job> job) : _jobs = job;
 
   /// The jobs
   final List<Job> _jobs;
 
-  @override
   Future<void> run() async {
     log.info('Detected ${_jobs.length} Jobs on the root');
     for (final job in _jobs) {

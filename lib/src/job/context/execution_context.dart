@@ -16,9 +16,6 @@ class ExecutionContext {
   /// The current step execution
   Execution? stepExecution;
 
-  /// The current task execution
-  Execution? taskExecution;
-
   /// The shared parameters
   final Parameters sharedParameters = SharedParameters.instance;
 

@@ -18,7 +18,6 @@ void main() {
     final context = ExecutionContext();
     expect(context.jobExecution, null);
     expect(context.stepExecution, null);
-    expect(context.taskExecution, null);
     expect(context.sharedParameters, SharedParameters.instance);
     expect(context.jobParameters.isEmpty, true);
   });
@@ -30,12 +29,9 @@ void main() {
         Execution(type: ExecutionType.job, name: 'Job', startedAt: now);
     context.stepExecution =
         Execution(type: ExecutionType.step, name: 'Step', startedAt: now);
-    context.taskExecution =
-        Execution(type: ExecutionType.task, name: 'Task', startedAt: now);
 
     expect(context.jobExecution!.name, 'Job');
     expect(context.stepExecution!.name, 'Step');
-    expect(context.taskExecution!.name, 'Task');
     expect(context.sharedParameters, SharedParameters.instance);
     expect(context.jobParameters.isEmpty, true);
   });

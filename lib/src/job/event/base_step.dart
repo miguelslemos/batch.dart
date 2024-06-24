@@ -9,18 +9,14 @@ import 'dart:async';
 import 'package:batch/src/job/config/retry_configuration.dart';
 import 'package:batch/src/job/config/skip_configuration.dart';
 import 'package:batch/src/job/context/execution_context.dart';
-import 'package:batch/src/job/event/base_step.dart';
-import 'package:batch/src/job/task/shutdown_task.dart';
-import 'package:batch/src/job/task/task.dart';
+import 'package:batch/src/job/event/event.dart';
 
-/// It represents the step responsible for the sequential process.
-///
-/// This step has a single [task] and is processed in sequential.
-class Step extends BaseStep {
-  /// Returns the new instance of [Step].
-  Step({
+/// The base class with common specifications for `Step` unit.
+abstract class BaseStep extends Event<BaseStep> {
+  /// Returns the new instance of [BaseStep].
+  BaseStep({
     required String name,
-    required Task task,
+    required this.tasks,
     FutureOr<bool> Function(ExecutionContext context)? precondition,
     Function(ExecutionContext context)? onStarted,
     Function(ExecutionContext context)? onSucceeded,
@@ -34,7 +30,6 @@ class Step extends BaseStep {
     List<BaseStep> branchesOnCompleted = const [],
   }) : super(
           name: name,
-          tasks: [task],
           precondition: precondition,
           onStarted: onStarted,
           onError: onError,
@@ -47,7 +42,6 @@ class Step extends BaseStep {
           branchesOnCompleted: branchesOnCompleted,
         );
 
-  /// Returns the new instance of [Step].
-  Step.ofShutdown({String name = 'Shutdown Step'})
-      : super(name: name, tasks: [ShutdownTask()]);
+  /// Returns the tasks.
+  final List<dynamic> tasks;
 }

@@ -31,7 +31,7 @@ void main() {
     );
 
     //! Required to load to run wait() with back off.
-    Logger.loadFrom(config: LogConfiguration(printLog: false));
+    Logger.loadFromConfig(LogConfiguration(printLog: false));
 
     expect(retryPolicy.shouldRetry(FormatException()), true);
     expect(retryPolicy.shouldRetry(_TestException()), false);

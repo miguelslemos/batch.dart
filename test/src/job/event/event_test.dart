@@ -67,22 +67,22 @@ void main() {
   });
 
   test('Test Event with branches', () {
-    final event = _Event(name: 'name');
+    final event = _Event(
+      name: 'name',
+      branchesOnSucceeded: [_Event(name: 'succeeded')],
+      branchesOnFailed: [_Event(name: 'failed')],
+      branchesOnCompleted: [_Event(name: 'completed')],
+    );
+
     expect(event.name, 'name');
-    expect(event.hasBranch, false);
-
-    event.createBranchOnSucceeded(to: _Event(name: 'succeeded'));
-    event.createBranchOnCompleted(to: _Event(name: 'completed'));
-    event.createBranchOnFailed(to: _Event(name: 'failed'));
-
     expect(event.hasBranch, true);
     expect(event.branches.length, 3);
     expect(event.branches[0].on, BranchStatus.succeeded);
     expect(event.branches[0].to.name, 'succeeded');
-    expect(event.branches[1].on, BranchStatus.completed);
-    expect(event.branches[1].to.name, 'completed');
-    expect(event.branches[2].on, BranchStatus.failed);
-    expect(event.branches[2].to.name, 'failed');
+    expect(event.branches[1].on, BranchStatus.failed);
+    expect(event.branches[1].to.name, 'failed');
+    expect(event.branches[2].on, BranchStatus.completed);
+    expect(event.branches[2].to.name, 'completed');
   });
 }
 
@@ -97,6 +97,9 @@ class _Event extends Event<_Event> {
     Function(ExecutionContext context)? onCompleted,
     SkipConfiguration? skipConfig,
     RetryConfiguration? retryConfig,
+    List<_Event> branchesOnSucceeded = const [],
+    List<_Event> branchesOnFailed = const [],
+    List<_Event> branchesOnCompleted = const [],
   }) : super(
           name: name,
           precondition: precondition,
@@ -106,5 +109,8 @@ class _Event extends Event<_Event> {
           onCompleted: onCompleted,
           skipConfig: skipConfig,
           retryConfig: retryConfig,
+          branchesOnSucceeded: branchesOnSucceeded,
+          branchesOnFailed: branchesOnFailed,
+          branchesOnCompleted: branchesOnCompleted,
         );
 }

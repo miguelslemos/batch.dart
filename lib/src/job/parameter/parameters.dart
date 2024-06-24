@@ -24,6 +24,9 @@ class Parameters {
   void forEach(void Function(String key, dynamic value) action) =>
       _objects.forEach((key, value) => action(key, value));
 
+  /// Adds all key/value pairs of [other] to this object.
+  void addAll(Map<String, dynamic> other) => _objects.addAll(other);
+
   // Returns true if this object has no parameter, otherwise false.
   bool get isEmpty => _objects.isEmpty;
 
